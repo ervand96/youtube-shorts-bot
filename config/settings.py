@@ -32,6 +32,16 @@ def get_env(name: str, default: str = "") -> str:
     return os.environ.get(name, default).strip()
 
 
+def use_premium_video() -> bool:
+    """Premium 3D costs money on Replicate. Default is free/basic until monetization."""
+    mode = get_env("VIDEO_MODE", "free").lower()
+    if mode in {"free", "basic", "0", "false", "no"}:
+        return False
+    if mode in {"premium", "3d", "paid", "1", "true", "yes"}:
+        return bool(get_env("REPLICATE_API_TOKEN"))
+    return False
+
+
 def date_paths(date_str: str) -> dict[str, Path]:
     return {
         "script": SCRIPTS_DIR / f"{date_str}-topic.md",

@@ -2,6 +2,7 @@
 credentials/
 token.json
 client_secrets.json
+credentials/automation-secrets.txt
 __pycache__/
 *.pyc
 .venv/

@@ -14,7 +14,17 @@ Automated daily pipeline for creating and publishing YouTube Shorts.
 6. **Upload** — `scripts/upload_youtube.py` (Public)
 7. **Analytics** — `scripts/fetch_analytics.py`
 
-## Premium 3D videos (NuNu TV style)
+## Video modes
+
+| Mode | Cost | Quality |
+|------|------|---------|
+| `VIDEO_MODE=free` (default) | $0 | 2D cartoon animation |
+| `VIDEO_MODE=premium` | ~$0.10–0.30/Short | 3D AI (NuNu TV style) |
+
+**Until monetization:** keep `VIDEO_MODE=free` in Automation secrets.
+After YouTube monetization, switch to `VIDEO_MODE=premium` and add `REPLICATE_API_TOKEN`.
+
+## Premium 3D videos (after monetization)
 
 For professional 3D kids cartoon quality:
 

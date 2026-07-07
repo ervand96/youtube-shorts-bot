@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from config.settings import VIDEOS_DIR, ensure_dirs, get_env
+from config.settings import VIDEOS_DIR, ensure_dirs, use_premium_video
 
 
 def main() -> None:
@@ -32,7 +32,7 @@ def main() -> None:
     if not audio_path.exists():
         raise FileNotFoundError(audio_path)
 
-    use_premium = args.premium or (get_env("REPLICATE_API_TOKEN") and not args.basic)
+    use_premium = args.premium or (use_premium_video() and not args.basic)
 
     if use_premium:
         from scripts.build_video_premium import build_premium_video
