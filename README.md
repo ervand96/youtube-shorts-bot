@@ -7,12 +7,33 @@ Automated daily pipeline for creating and publishing YouTube Shorts.
 1. **Research** — find trending kids cartoon / bedtime story topics
 2. **Script** — write 30–60 second script (simple English)
 3. **Voice** — `scripts/generate_voice.py` (edge-tts or ElevenLabs)
-4. **Video** — `scripts/build_video.py` (animated cartoon scenes: bunny, hills, gate, hop animation)
+4. **Video** — `scripts/build_video.py`
+   - **Premium (default if token set):** AI 3D scenes via Replicate (Flux + motion)
+   - **Basic fallback:** 2D cartoon animation
 5. **SEO** — metadata JSON in `videos/YYYY-MM-DD-metadata.json`
 6. **Upload** — `scripts/upload_youtube.py` (Public)
 7. **Analytics** — `scripts/fetch_analytics.py`
 
-## Quick start
+## Premium 3D videos (NuNu TV style)
+
+For professional 3D kids cartoon quality:
+
+1. Create token at [replicate.com/account/api-tokens](https://replicate.com/account/api-tokens)
+2. Add to `.env` and Cursor Automation secrets:
+   ```
+   REPLICATE_API_TOKEN=r8_...
+   ```
+3. Pipeline auto-uses premium mode when token is set.
+
+Each Short generates ~5 AI scenes (Flux 3D style) + motion clips.
+Estimated cost: ~$0.10–0.30 per Short on Replicate.
+
+Force modes:
+```bash
+python scripts/build_video.py --date 2026-07-08 --script scripts/....md --premium
+python scripts/build_video.py --date 2026-07-08 --script scripts/....md --basic
+```
+
 
 ```bash
 cd ~/Projects/youtube-shorts-bot
