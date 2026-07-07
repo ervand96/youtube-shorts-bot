@@ -75,14 +75,18 @@ def write_summary(date_str: str, stats: dict) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Fetch YouTube video analytics")
-    parser.add_argument("--date", required=True)
+    parser.add_argument("--id", help="File id e.g. 2026-07-09-1")
+    parser.add_argument("--date", help="Legacy date id")
     parser.add_argument("--video-id", help="YouTube video ID override")
     args = parser.parse_args()
+    file_id = args.id or args.date
+    if not file_id:
+        raise SystemExit("Provide --id or --date")
 
     ensure_dirs()
-    upload_log = ANALYTICS_DIR / f"{args.date}-upload.json"
-    stats_path = ANALYTICS_DIR / f"{args.date}-stats.json"
-    metadata_path = ROOT / "videos" / f"{args.date}-metadata.json"
+    upload_log = ANALYTICS_DIR / f"{file_id}-upload.json"
+    stats_path = ANALYTICS_DIR / f"{file_id}-stats.json"
+    metadata_path = ROOT / "videos" / f"{file_id}-metadata.json"
 
     video_id = args.video_id
     if not video_id:
@@ -93,7 +97,7 @@ def main() -> None:
     stats = fetch_stats(video_id)
     stats_path.write_text(json.dumps(stats, indent=2), encoding="utf-8")
     update_top_topics(stats, metadata_path if metadata_path.exists() else None)
-    write_summary(args.date, stats)
+    write_summary(file_id, stats)
     print(json.dumps(stats, indent=2))
 
 

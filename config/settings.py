@@ -43,13 +43,17 @@ def use_premium_video() -> bool:
 
 
 def date_paths(date_str: str) -> dict[str, Path]:
+    return file_paths(date_str)
+
+
+def file_paths(file_id: str) -> dict[str, Path]:
     return {
-        "script": SCRIPTS_DIR / f"{date_str}-topic.md",
-        "audio": AUDIO_DIR / f"{date_str}.mp3",
-        "video": VIDEOS_DIR / f"{date_str}.mp4",
-        "metadata": VIDEOS_DIR / f"{date_str}-metadata.json",
-        "upload_log": ANALYTICS_DIR / f"{date_str}-upload.json",
-        "stats": ANALYTICS_DIR / f"{date_str}-stats.json",
-        "summary": ANALYTICS_DIR / f"{date_str}-summary.md",
-        "error": ANALYTICS_DIR / f"{date_str}-error.md",
+        "script": SCRIPTS_DIR / f"{file_id}-topic.md",
+        "audio": AUDIO_DIR / f"{file_id}.mp3",
+        "video": VIDEOS_DIR / f"{file_id}.mp4",
+        "metadata": VIDEOS_DIR / f"{file_id}-metadata.json",
+        "upload_log": ANALYTICS_DIR / f"{file_id}-upload.json",
+        "stats": ANALYTICS_DIR / f"{file_id}-stats.json",
+        "summary": ANALYTICS_DIR / f"{file_id}-summary.md",
+        "error": ANALYTICS_DIR / f"{file_id}-error.md",
     }

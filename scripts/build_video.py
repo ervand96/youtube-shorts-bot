@@ -15,17 +15,21 @@ from config.settings import VIDEOS_DIR, ensure_dirs, use_premium_video
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build kids cartoon Short video")
-    parser.add_argument("--date", required=True)
+    parser.add_argument("--id", help="File id e.g. 2026-07-09-1")
+    parser.add_argument("--date", help="Legacy date id YYYY-MM-DD")
     parser.add_argument("--script", required=True)
     parser.add_argument("--audio", help="Audio path override")
-    parser.add_argument("--premium", action="store_true", help="Force 3D AI pipeline")
-    parser.add_argument("--basic", action="store_true", help="Force basic 2D cartoon pipeline")
+    parser.add_argument("--premium", action="store_true")
+    parser.add_argument("--basic", action="store_true")
     args = parser.parse_args()
+    file_id = args.id or args.date
+    if not file_id:
+        raise SystemExit("Provide --id or --date")
 
     ensure_dirs()
     script_path = Path(args.script)
-    audio_path = Path(args.audio) if args.audio else ROOT / "audio" / f"{args.date}.mp3"
-    output_path = VIDEOS_DIR / f"{args.date}.mp4"
+    audio_path = Path(args.audio) if args.audio else ROOT / "audio" / f"{file_id}.mp3"
+    output_path = VIDEOS_DIR / f"{file_id}.mp4"
 
     if not script_path.exists():
         raise FileNotFoundError(script_path)
@@ -37,7 +41,7 @@ def main() -> None:
     if use_premium:
         from scripts.build_video_premium import build_premium_video
 
-        build_premium_video(script_path, audio_path, output_path, args.date)
+        build_premium_video(script_path, audio_path, output_path, file_id)
     else:
         from scripts.build_video_basic import build_video
 

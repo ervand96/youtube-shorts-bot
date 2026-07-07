@@ -1,0 +1,35 @@
+{
+  "slots": [
+    {
+      "category": "nursery",
+      "title": "Wheels on the Bus | Kids Song",
+      "tags": ["wheels on the bus", "nursery rhyme", "kids songs"],
+      "script_hook": "The wheels on the bus go round and round"
+    },
+    {
+      "category": "bedtime",
+      "title": "Bedtime Bunny Story for Kids",
+      "tags": ["bedtime story", "bunny", "kids cartoon"],
+      "script_hook": "Once upon a time, a little bunny could not sleep"
+    },
+    {
+      "category": "learning",
+      "title": "Learn Colors with Benny | Kids",
+      "tags": ["learn colors", "educational", "preschool"],
+      "script_hook": "Red, blue, yellow, green — let's learn colors!"
+    },
+    {
+      "category": "moral",
+      "title": "Sharing is Caring | Moral Story",
+      "tags": ["moral story", "sharing", "kids lesson"],
+      "script_hook": "Benny learned that sharing makes everyone happy"
+    },
+    {
+      "category": "animals",
+      "title": "Farm Animals Song for Toddlers",
+      "tags": ["farm animals", "animal sounds", "toddler songs"],
+      "script_hook": "The cow says moo, the duck says quack"
+    }
+  ],
+  "publish_hours_local": [9, 11, 13, 15, 17]
+}

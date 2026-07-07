@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Upload rendered Short to YouTube as Public."""
+"""Upload rendered Short to YouTube."""
 
 from __future__ import annotations
 
@@ -26,8 +26,16 @@ def load_metadata(metadata_path: Path) -> dict:
     return data
 
 
-def upload_video(video_path: Path, metadata: dict) -> dict:
+def upload_video(video_path: Path, metadata: dict, publish_at: str | None = None) -> dict:
     youtube = get_youtube_service()
+    status = {
+        "selfDeclaredMadeForKids": True,
+        "privacyStatus": metadata.get("privacyStatus", "public"),
+    }
+    if publish_at:
+        status["privacyStatus"] = "private"
+        status["publishAt"] = publish_at
+
     body = {
         "snippet": {
             "title": metadata["title"][:100],
@@ -35,10 +43,7 @@ def upload_video(video_path: Path, metadata: dict) -> dict:
             "tags": metadata["tags"],
             "categoryId": str(metadata.get("categoryId", "24")),
         },
-        "status": {
-            "privacyStatus": metadata.get("privacyStatus", "public"),
-            "selfDeclaredMadeForKids": True,
-        },
+        "status": status,
     }
 
     media = MediaFileUpload(str(video_path), mimetype="video/mp4", resumable=True, chunksize=1024 * 1024)
@@ -46,9 +51,9 @@ def upload_video(video_path: Path, metadata: dict) -> dict:
 
     response = None
     while response is None:
-        status, response = request.next_chunk()
-        if status:
-            print(f"Upload {int(status.progress() * 100)}%")
+        status_chunk, response = request.next_chunk()
+        if status_chunk:
+            print(f"Upload {int(status_chunk.progress() * 100)}%")
 
     video_id = response["id"]
     return {
@@ -56,19 +61,25 @@ def upload_video(video_path: Path, metadata: dict) -> dict:
         "url": f"https://youtube.com/shorts/{video_id}",
         "title": metadata["title"],
         "privacyStatus": body["status"]["privacyStatus"],
+        "publishAt": publish_at,
     }
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Upload Short to YouTube")
-    parser.add_argument("--date", required=True)
+    parser.add_argument("--id", help="File id e.g. 2026-07-09-1")
+    parser.add_argument("--date", help="Legacy date id")
     parser.add_argument("--metadata", help="Metadata JSON path override")
+    parser.add_argument("--publish-at", help="RFC3339 UTC schedule e.g. 2026-07-09T05:00:00Z")
     args = parser.parse_args()
+    file_id = args.id or args.date
+    if not file_id:
+        raise SystemExit("Provide --id or --date")
 
     ensure_dirs()
-    video_path = VIDEOS_DIR / f"{args.date}.mp4"
-    metadata_path = Path(args.metadata) if args.metadata else VIDEOS_DIR / f"{args.date}-metadata.json"
-    upload_log = ANALYTICS_DIR / f"{args.date}-upload.json"
+    video_path = VIDEOS_DIR / f"{file_id}.mp4"
+    metadata_path = Path(args.metadata) if args.metadata else VIDEOS_DIR / f"{file_id}-metadata.json"
+    upload_log = ANALYTICS_DIR / f"{file_id}-upload.json"
 
     if not video_path.exists():
         raise FileNotFoundError(video_path)
@@ -76,7 +87,7 @@ def main() -> None:
         raise FileNotFoundError(metadata_path)
 
     metadata = load_metadata(metadata_path)
-    result = upload_video(video_path, metadata)
+    result = upload_video(video_path, metadata, publish_at=args.publish_at)
     upload_log.write_text(json.dumps(result, indent=2), encoding="utf-8")
     print(json.dumps(result, indent=2))
 

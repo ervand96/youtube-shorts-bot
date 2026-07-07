@@ -55,10 +55,14 @@ def generate_elevenlabs(text: str, output_path: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate voiceover MP3")
-    parser.add_argument("--date", required=True, help="Date string YYYY-MM-DD")
+    parser.add_argument("--id", help="File id e.g. 2026-07-09-1")
+    parser.add_argument("--date", help="Legacy date id YYYY-MM-DD")
     parser.add_argument("--script", required=True, help="Path to script markdown")
     parser.add_argument("--voice", default="en-US-AnaNeural", help="edge-tts voice name")
     args = parser.parse_args()
+    file_id = args.id or args.date
+    if not file_id:
+        raise SystemExit("Provide --id or --date")
 
     ensure_dirs()
     script_path = Path(args.script)
@@ -69,7 +73,7 @@ def main() -> None:
     if not text:
         raise ValueError("Could not extract script text")
 
-    output_path = AUDIO_DIR / f"{args.date}.mp3"
+    output_path = AUDIO_DIR / f"{file_id}.mp3"
     print(f"Generating voiceover ({len(text)} chars) -> {output_path}")
 
     if get_env("ELEVENLABS_API_KEY"):
