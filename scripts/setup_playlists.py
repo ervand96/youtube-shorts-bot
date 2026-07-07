@@ -18,19 +18,25 @@ PLAYLISTS = [
         "title": "Nursery Rhymes & Kids Songs",
         "description": "Sing-along nursery rhymes and fun kids songs from Benny's Story World!",
         "keywords": ["nursery rhymes", "kids songs", "sing along", "toddler"],
-        "match": ["wheels", "bus", "song", "farm", "animals"],
+        "match": ["bus", "rainbow", "nursery", "rhyme", "farm", "animal", "song", "band"],
     },
     {
         "title": "Bedtime Stories for Kids",
         "description": "Gentle bedtime cartoon stories for ages 2-8. Sweet dreams!",
-        "keywords": ["bedtime", "story", "bunny", "sleep"],
-        "match": ["bedtime", "bunny", "brave", "story"],
+        "keywords": ["bedtime", "story", "sleepy", "star"],
+        "match": ["bedtime", "sleepy", "star", "sleep", "dream"],
     },
     {
         "title": "Learning for Preschool",
-        "description": "Fun educational Shorts — colors, numbers, and more for preschoolers.",
-        "keywords": ["learn", "colors", "educational", "preschool"],
-        "match": ["learn", "colors", "educational", "moral", "sharing"],
+        "description": "Fun educational Shorts — colors, numbers, ABC and more for preschoolers.",
+        "keywords": ["learn", "colors", "numbers", "educational", "preschool"],
+        "match": ["learn", "colors", "numbers", "preschool", "educational"],
+    },
+    {
+        "title": "Moral Stories for Kids",
+        "description": "Sweet moral lessons about sharing, kindness, and friendship.",
+        "keywords": ["moral", "sharing", "kindness", "caring"],
+        "match": ["sharing", "moral", "caring", "picnic", "lesson", "kind"],
     },
 ]
 
