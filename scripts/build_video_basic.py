@@ -7,7 +7,7 @@ import tempfile
 from pathlib import Path
 
 from config.settings import ASSETS_DIR, VIDEO_FPS
-from scripts.cartoon_renderer import extract_script_lines, render_cartoon_frame
+from scripts.cartoon_renderer import build_video_theme, extract_script_lines, render_cartoon_frame
 
 
 def get_audio_duration(audio_path: Path) -> float:
@@ -31,6 +31,7 @@ def get_audio_duration(audio_path: Path) -> float:
 
 def build_video(script_path: Path, audio_path: Path, output_path: Path) -> None:
     lines = extract_script_lines(script_path)
+    theme = build_video_theme(script_path)
     duration = get_audio_duration(audio_path)
     seconds_per_line = max(duration / len(lines), 2.0)
 
@@ -40,7 +41,7 @@ def build_video(script_path: Path, audio_path: Path, output_path: Path) -> None:
         for line_idx, line in enumerate(lines):
             frames_for_line = max(int(seconds_per_line * VIDEO_FPS), VIDEO_FPS * 2)
             for f in range(frames_for_line):
-                frame = render_cartoon_frame(line, line_idx, len(lines), f, frames_for_line)
+                frame = render_cartoon_frame(line, line_idx, len(lines), f, frames_for_line, theme)
                 frame.save(tmp_path / f"frame_{frame_idx:05d}.png")
                 frame_idx += 1
 
