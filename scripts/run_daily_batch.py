@@ -66,7 +66,7 @@ def main() -> None:
             hour = hours[slot - 1] if slot - 1 < len(hours) else 9 + slot * 2
             pub = publish_at_iso(args.date, hour)
             run([py, str(scripts / "upload_youtube.py"), "--id", fid, "--publish-at", pub])
-            run([py, str(scripts / "fetch_analytics.py"), "--date", fid])
+            run([py, str(scripts / "fetch_analytics.py"), "--id", fid])
 
         results.append(fid)
 
