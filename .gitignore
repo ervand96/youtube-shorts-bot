@@ -1,0 +1,18 @@
+.env
+credentials/
+token.json
+client_secrets.json
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+
+# Generated media (too large for git)
+audio/*.mp3
+videos/*.mp4
+
+# Keep directory structure and metadata templates
+!audio/.gitkeep
+!videos/.gitkeep
+!videos/*-metadata.json
