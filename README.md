@@ -7,7 +7,7 @@ Automated daily pipeline for creating and publishing YouTube Shorts.
 1. **Research** — find trending kids cartoon / bedtime story topics
 2. **Script** — write 30–60 second script (simple English)
 3. **Voice** — `scripts/generate_voice.py` (edge-tts or ElevenLabs)
-4. **Video** — `scripts/build_video.py` (ffmpeg + Pillow subtitles)
+4. **Video** — `scripts/build_video.py` (animated cartoon scenes: bunny, hills, gate, hop animation)
 5. **SEO** — metadata JSON in `videos/YYYY-MM-DD-metadata.json`
 6. **Upload** — `scripts/upload_youtube.py` (Public)
 7. **Analytics** — `scripts/fetch_analytics.py`
