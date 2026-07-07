@@ -13,7 +13,44 @@
       "views": 0,
       "likes": 0,
       "recorded_at": "2026-07-07T18:18:13.561592+00:00"
+    },
+    {
+      "topic": "2026-07-07-1",
+      "title": "Benny Bus Rainbow Song | Nursery Rhyme for Kids",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-07T19:08:53.806922+00:00"
+    },
+    {
+      "topic": "2026-07-07-2",
+      "title": "Sleepy Star Bedtime Story for Kids",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-07T19:09:46.610222+00:00"
+    },
+    {
+      "topic": "2026-07-07-3",
+      "title": "Learn Colors and Numbers with Benny | Preschool Short",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-07T19:10:36.911616+00:00"
+    },
+    {
+      "topic": "2026-07-07-4",
+      "title": "Sharing is Caring Picnic Story | Moral Story for Kids",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-07T19:11:28.938140+00:00"
+    },
+    {
+      "topic": "2026-07-07-5",
+      "title": "Farm Animals Band Song for Toddlers | Animal Sounds",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-07T19:12:23.384109+00:00"
     }
   ],
-  "learnings": []
+  "learnings": [
+    "2026-07-07 daily batch tested five distinct formats: nursery song, bedtime story, colors/numbers learning, sharing moral, and farm animal song. Initial stats are 0 views/likes immediately after upload; compare these slots after the next analytics refresh before biasing future topics."
+  ]
 }
