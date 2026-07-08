@@ -48,7 +48,45 @@
       "views": 0,
       "likes": 0,
       "recorded_at": "2026-07-07T19:25:39.434848+00:00"
+    },
+    {
+      "topic": "2026-07-08-1",
+      "title": "Good Morning Song for Kids | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-08T03:04:18.317399+00:00"
+    },
+    {
+      "topic": "2026-07-08-2",
+      "title": "Bedtime Story for Kids | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-08T03:05:08.466236+00:00"
+    },
+    {
+      "topic": "2026-07-08-3",
+      "title": "ABC Song for Toddlers | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-08T03:05:56.529054+00:00"
+    },
+    {
+      "topic": "2026-07-08-4",
+      "title": "Kindness Story for Kids | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-08T03:06:44.801667+00:00"
+    },
+    {
+      "topic": "2026-07-08-5",
+      "title": "Old MacDonald Farm Animals Song | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-08T03:07:32.189431+00:00"
     }
   ],
-  "learnings": []
+  "learnings": [
+    "2026-07-08 early batch: all five uploads fetched at 0 views immediately after scheduling; compare after publish windows before choosing winners.",
+    "2026-07-08 topic mix intentionally varied from 2026-07-07 with good morning routine, moon puppy bedtime, ABC letters, kindness cleanup, and Old MacDonald animal sounds."
+  ]
 }
