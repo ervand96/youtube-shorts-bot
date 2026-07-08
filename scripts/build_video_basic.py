@@ -7,7 +7,8 @@ import tempfile
 from pathlib import Path
 
 from config.settings import ASSETS_DIR, VIDEO_FPS
-from scripts.cartoon_renderer import build_video_theme, extract_script_lines, render_cartoon_frame
+from scripts.cartoon_renderer import build_video_theme, extract_script_lines, parse_script_category, render_cartoon_frame
+from scripts.ensure_music import ensure_music
 
 
 def get_audio_duration(audio_path: Path) -> float:
@@ -45,14 +46,18 @@ def build_video(script_path: Path, audio_path: Path, output_path: Path) -> None:
                 frame.save(tmp_path / f"frame_{frame_idx:05d}.png")
                 frame_idx += 1
 
-        music = ASSETS_DIR / "background.mp3"
+        category = parse_script_category(script_path)
+        music = ensure_music(category)
+        fallback = ASSETS_DIR / "background.mp3"
+        if not music.exists() and fallback.exists():
+            music = fallback
         cmd = ["ffmpeg", "-y", "-framerate", str(VIDEO_FPS), "-i", str(tmp_path / "frame_%05d.png"), "-i", str(audio_path)]
         if music.exists():
             cmd += [
                 "-i",
                 str(music),
                 "-filter_complex",
-                "[1:a]volume=1.0[a1];[2:a]volume=0.10[a2];[a1][a2]amix=inputs=2:duration=first[aout]",
+                "[1:a]volume=1.0[a1];[2:a]volume=0.28,aloop=loop=-1:size=2e+09[a2];[a1][a2]amix=inputs=2:duration=first:dropout_transition=0[aout]",
                 "-map",
                 "0:v",
                 "-map",

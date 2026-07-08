@@ -12,6 +12,8 @@ venv/
 # Generated media (too large for git)
 audio/*.mp3
 videos/*.mp4
+assets/music/*.wav
+assets/music/*.mp3
 
 # Keep directory structure and metadata templates
 !audio/.gitkeep

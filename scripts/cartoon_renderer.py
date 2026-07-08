@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import math
 import re
 import random
@@ -13,12 +12,33 @@ from PIL import Image, ImageDraw, ImageFont
 
 from config.settings import VIDEO_HEIGHT, VIDEO_WIDTH
 
-CATEGORY_SCENES: dict[str, list[str]] = {
+CATEGORY_SCENES: dict[str, tuple[str, ...]] = {
     "nursery": ("bus", "rainbow_road", "song_circle"),
-    "bedtime": ("bedroom_night", "moon_stars", "sleepy_meadow"),
-    "learning": ("classroom", "color_blocks", "counting_garden"),
+    "bedtime": ("moon_stars", "bedroom_night", "sleepy_meadow"),
+    "learning": ("color_blocks", "classroom", "counting_garden"),
     "moral": ("picnic", "sharing_table", "friends_meadow"),
-    "animals": ("farm_barn", "animal_band", "meadow_animals"),
+    "animals": ("animal_band", "farm_barn", "meadow_animals"),
+}
+CATEGORY_PALETTE: dict[str, int] = {
+    "nursery": 0,
+    "animals": 1,
+    "learning": 2,
+    "moral": 3,
+    "bedtime": 4,
+}
+CATEGORY_ACCENTS: dict[str, tuple[int, int, int]] = {
+    "nursery": (255, 170, 40),
+    "bedtime": (120, 150, 255),
+    "learning": (80, 180, 255),
+    "moral": (255, 120, 150),
+    "animals": (100, 200, 90),
+}
+CATEGORY_BUS_COLORS: dict[str, tuple[int, int, int]] = {
+    "nursery": (255, 210, 0),
+    "animals": (255, 140, 60),
+    "learning": (80, 180, 255),
+    "moral": (180, 100, 255),
+    "bedtime": (255, 200, 120),
 }
 DEFAULT_SCENES = ("meadow", "playground", "party")
 
@@ -66,47 +86,41 @@ def parse_script_category(script_path: Path) -> str:
     return "nursery"
 
 
+def _parse_slot(script_path: Path) -> int:
+    match = re.search(r"-(\d+)-topic\.md$", script_path.name)
+    return int(match.group(1)) if match else 1
+
+
 def build_video_theme(script_path: Path) -> VideoTheme:
     category = parse_script_category(script_path)
-    digest = int(hashlib.md5(str(script_path).encode()).hexdigest()[:8], 16)
+    slot = _parse_slot(script_path)
     scenes = CATEGORY_SCENES.get(category, DEFAULT_SCENES)
-    palette_idx = digest % 4
-    bus_colors = (
-        (255, 210, 0),
-        (255, 120, 80),
-        (80, 180, 255),
-        (180, 100, 255),
-    )
-    accents = (
-        (255, 90, 120),
-        (90, 170, 255),
-        (120, 200, 90),
-        (255, 170, 60),
-    )
+    palette_idx = CATEGORY_PALETTE.get(category, slot % 4)
     return VideoTheme(
         category=category,
         palette_idx=palette_idx,
         scenes=scenes,
-        bus_color=bus_colors[palette_idx],
-        accent=accents[palette_idx],
+        bus_color=CATEGORY_BUS_COLORS.get(category, (255, 210, 0)),
+        accent=CATEGORY_ACCENTS.get(category, (255, 90, 120)),
         night_mode=category == "bedtime",
     )
 
 
 def pick_scene(theme: VideoTheme, line: str, line_idx: int) -> str:
+    # Rotate scenes every script line so each Short feels visually different.
+    base = theme.scenes[line_idx % len(theme.scenes)]
     lowered = line.lower()
-    keyword_map = (
-        (("cow", "moo", "duck", "quack", "farm", "pig", "sheep"), "animal_band"),
-        (("star", "sleep", "dream", "moon", "bed"), "moon_stars"),
-        (("red", "blue", "yellow", "green", "color", "count", "number"), "color_blocks"),
-        (("share", "picnic", "muffin", "caring"), "picnic"),
-        (("bus", "wheel", "wiper", "round"), "bus"),
-        (("rainbow",), "rainbow_road"),
-    )
-    for keywords, scene in keyword_map:
-        if any(word in lowered for word in keywords):
-            return scene
-    return theme.scenes[line_idx % len(theme.scenes)]
+    if theme.category == "animals" and any(w in lowered for w in ("cow", "moo", "duck", "quack", "pig", "sheep", "farm")):
+        return "animal_band"
+    if theme.category == "bedtime" and any(w in lowered for w in ("star", "sleep", "dream", "moon")):
+        return "moon_stars"
+    if theme.category == "learning" and any(w in lowered for w in ("abc", "letter", "color", "number", "count")):
+        return "color_blocks"
+    if theme.category == "moral" and any(w in lowered for w in ("share", "kind", "caring", "picnic")):
+        return "picnic"
+    if theme.category == "nursery" and line_idx == 0:
+        return theme.scenes[0]
+    return base
 
 
 def _hex(c: str) -> tuple[int, int, int]:
@@ -272,10 +286,11 @@ def draw_sky_scene(draw: ImageDraw.ImageDraw, palette_idx: int, frame: int, nigh
         ]
     else:
         palettes = [
-            ("#5BC8FF", "#B8E8FF", "#6AD66A"),
-            ("#89CFF0", "#FFE5B4", "#7ED957"),
-            ("#FFB6C1", "#FFF0F5", "#98D98E"),
-            ("#FFD93D", "#FFF8DC", "#6BCB77"),
+            ("#5BC8FF", "#B8E8FF", "#6AD66A"),      # nursery sky
+            ("#89CFF0", "#FFE5B4", "#7ED957"),      # animals farm
+            ("#B8E0FF", "#FFF4C2", "#98D98E"),     # learning
+            ("#FFB6C1", "#FFF0F5", "#90C695"),     # moral picnic
+            ("#1B1F3B", "#3D2C5E", "#2D4A3E"),     # bedtime (unused when night=True)
         ]
     top, mid, hill = palettes[palette_idx % len(palettes)]
     t, m = _hex(top), _hex(mid)
@@ -312,7 +327,8 @@ def render_scene(
     if scene == "bus":
         draw_yellow_bus(draw, base_y, frame_idx, theme.bus_color)
         draw_toddler(draw, 720, base_y - 60, frame_idx, "blonde")
-        draw_bunny_friend(draw, 900, base_y - 30, frame_idx)
+        if theme.category != "nursery":
+            draw_bunny_friend(draw, 900, base_y - 30, frame_idx)
     elif scene == "rainbow_road":
         draw_rainbow_road(draw, base_y)
         draw_yellow_bus(draw, base_y, frame_idx, theme.bus_color)
@@ -337,11 +353,11 @@ def render_scene(
         draw_bunny_friend(draw, 700, base_y - 60, frame_idx)
     elif scene in {"farm_barn", "animal_band", "meadow_animals"}:
         draw_farm_barn(draw, base_y)
-        draw_farm_animal(draw, 300, base_y - 40, "cow", frame_idx)
-        draw_farm_animal(draw, 520, base_y - 20, "duck", frame_idx)
-        draw_farm_animal(draw, 720, base_y - 30, "sheep", frame_idx)
+        draw_farm_animal(draw, 260, base_y - 40, "cow", frame_idx)
+        draw_farm_animal(draw, 480, base_y - 20, "duck", frame_idx)
+        draw_farm_animal(draw, 700, base_y - 30, "sheep", frame_idx)
         draw_farm_animal(draw, 900, base_y - 10, "pig", frame_idx)
-        draw_bunny_friend(draw, 560, base_y - 80, frame_idx)
+        draw_toddler(draw, 560, base_y - 90, frame_idx, "brown")
     elif scene == "playground":
         draw_playground(draw, base_y)
         draw_toddler(draw, 480, base_y - 50, frame_idx, "brown")
