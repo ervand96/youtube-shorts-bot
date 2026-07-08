@@ -6,9 +6,12 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from PIL import Image
+
 from config.settings import ASSETS_DIR, VIDEO_FPS
 from scripts.cartoon_renderer import build_video_theme, extract_script_lines, parse_script_category, render_cartoon_frame
 from scripts.ensure_music import ensure_music
+from scripts.motion_effects import TRANSITION_FRAMES, slide_wipe
 
 
 def get_audio_duration(audio_path: Path) -> float:
@@ -39,12 +42,41 @@ def build_video(script_path: Path, audio_path: Path, output_path: Path) -> None:
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
         frame_idx = 0
+        prev_tail: list[Image.Image] = []
+
         for line_idx, line in enumerate(lines):
             frames_for_line = max(int(seconds_per_line * VIDEO_FPS), VIDEO_FPS * 2)
+            line_frames: list[Image.Image] = []
+
             for f in range(frames_for_line):
-                frame = render_cartoon_frame(line, line_idx, len(lines), f, frames_for_line, theme)
-                frame.save(tmp_path / f"frame_{frame_idx:05d}.png")
-                frame_idx += 1
+                frame = render_cartoon_frame(
+                    line,
+                    line_idx,
+                    len(lines),
+                    f,
+                    frames_for_line,
+                    theme,
+                    global_frame=frame_idx,
+                )
+                line_frames.append(frame)
+
+            # Crossfade transition from previous line
+            if prev_tail and line_frames:
+                overlap = min(TRANSITION_FRAMES, len(prev_tail), len(line_frames))
+                for t in range(overlap):
+                    blend_t = t / max(overlap - 1, 1)
+                    blended = slide_wipe(prev_tail[-(overlap - t)], line_frames[t], blend_t)
+                    blended.save(tmp_path / f"frame_{frame_idx:05d}.png")
+                    frame_idx += 1
+                for frame in line_frames[overlap:]:
+                    frame.save(tmp_path / f"frame_{frame_idx:05d}.png")
+                    frame_idx += 1
+            else:
+                for frame in line_frames:
+                    frame.save(tmp_path / f"frame_{frame_idx:05d}.png")
+                    frame_idx += 1
+
+            prev_tail = line_frames[-TRANSITION_FRAMES:]
 
         category = parse_script_category(script_path)
         music = ensure_music(category)
@@ -71,7 +103,7 @@ def build_video(script_path: Path, audio_path: Path, output_path: Path) -> None:
             "-preset",
             "medium",
             "-crf",
-            "23",
+            "21",
             "-pix_fmt",
             "yuv420p",
             "-c:a",
