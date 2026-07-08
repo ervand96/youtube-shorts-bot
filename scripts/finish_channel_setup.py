@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import sys
 import time
 from pathlib import Path
@@ -45,7 +46,7 @@ PLAYLISTS = [
         "title": "Learning for Preschool",
         "description": "Fun educational Shorts — colors, numbers, ABC and more for preschoolers.",
         "keywords": ["learn", "colors", "numbers", "educational", "preschool"],
-        "match": ["learn", "colors", "numbers", "preschool", "educational"],
+        "match": ["learn", "colors", "numbers", "preschool", "educational", "abc"],
     },
     {
         "title": "Moral Stories for Kids",
@@ -104,20 +105,41 @@ def upload_watermark(youtube, channel_id: str) -> None:
         print("Watermark file missing, skipped")
         return
     try:
-        youtube.watermarks().set(
-            channelId=channel_id,
-            body={
+        import requests
+
+        from scripts.youtube_client import load_credentials
+
+        creds = load_credentials()
+        if not creds.valid:
+            creds.refresh(__import__("google.auth.transport.requests", fromlist=["Request"]).Request())
+
+        url = "https://www.googleapis.com/upload/youtube/v3/watermarks/set"
+        params = {"channelId": channel_id}
+        headers = {"Authorization": f"Bearer {creds.token}"}
+        timing = json.dumps(
+            {
                 "timing": {
                     "type": "offsetFromStart",
-                    "offsetMs": "5000",
-                    "durationMs": "15000",
+                    "offsetMs": 0,
+                    "durationMs": 3600000,
                 },
                 "position": {"type": "corner", "cornerPosition": "bottomRight"},
                 "targetChannelId": channel_id,
-            },
-            media_body=MediaFileUpload(str(watermark), mimetype="image/png", resumable=False),
-        ).execute()
-        print(f"Watermark uploaded: {watermark.name}")
+            }
+        )
+        with watermark.open("rb") as fh:
+            resp = requests.post(
+                url,
+                params=params,
+                headers=headers,
+                files={
+                    "media": ("watermark.png", fh, "image/png"),
+                    "metadata": (None, timing, "application/json"),
+                },
+                timeout=60,
+            )
+        resp.raise_for_status()
+        print(f"Watermark uploaded (full video): {watermark.name}")
     except Exception as exc:
         print(f"Watermark failed (set manually in Studio): {exc}")
 
