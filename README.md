@@ -69,6 +69,20 @@ python scripts/run_pipeline.py --date 2026-07-07
 python scripts/run_pipeline.py --date 2026-07-07 --skip-upload
 ```
 
+## Diagnose zero views / reach
+
+```bash
+# Live channel health report → analytics/channel-diagnosis-live.json
+python scripts/diagnose_channel.py
+
+# Strip banned brand tags + unpublish copyright-risk Shorts
+python scripts/diagnose_channel.py --fix-tags --unpublish-risky
+```
+
+For impressions/CTR, enable **YouTube Analytics API** in Google Cloud project
+`123927465549`, then re-run `python scripts/setup_youtube_auth.py` so the new
+`yt-analytics.readonly` scope is granted.
+
 ## Individual steps
 
 ```bash

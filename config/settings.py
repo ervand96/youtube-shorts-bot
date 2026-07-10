@@ -20,6 +20,8 @@ YOUTUBE_SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
     "https://www.googleapis.com/auth/youtube.readonly",
     "https://www.googleapis.com/auth/youtube.force-ssl",
+    # Enable YouTube Analytics API in Google Cloud, then re-auth to unlock impressions/CTR.
+    "https://www.googleapis.com/auth/yt-analytics.readonly",
 ]
 
 

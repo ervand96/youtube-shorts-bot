@@ -1,0 +1,524 @@
+{
+  "fetched_at": "2026-07-10T19:19:05.096049+00:00",
+  "channel": {
+    "id": "UCEXT3bRoIHn6x2mcRNWFxGQ",
+    "title": "Benny's Story World",
+    "customUrl": "@bennysstoryworldkids",
+    "views": 5,
+    "subs": 1,
+    "videoCount": 13,
+    "madeForKids": true,
+    "selfDeclaredMadeForKids": true,
+    "publishedAt": "2021-01-27T16:57:56.616378Z",
+    "url": "https://youtube.com/@bennysstoryworldkids"
+  },
+  "summary": {
+    "videos": 14,
+    "total_views": 6,
+    "zero_view_videos": 9,
+    "banned_tag_videos": 0,
+    "copyright_risk_videos": 1,
+    "burst_publish_videos": 4
+  },
+  "findings": [
+    {
+      "severity": "critical",
+      "code": "cold_start_no_impressions",
+      "title": "Almost no distribution yet",
+      "detail": "Channel has 13 videos but only 5 channel views (6 summed on videos). 9/14 Shorts still sit at 0 views \u2014 YouTube is barely testing them in the Shorts feed."
+    },
+    {
+      "severity": "critical",
+      "code": "made_for_kids_limits_shorts_feed",
+      "title": "Made for Kids limits Shorts feed reach",
+      "detail": "Channel and every video are Made for Kids (required for this niche under COPPA). MFK disables comments/notifications and blocks personalized Shorts targeting, so growth is much slower than general-audience Shorts. Do NOT flip this off \u2014 kids content must stay MFK. Expect search + parent shares + YouTube Kids, not viral Shorts."
+    },
+    {
+      "severity": "high",
+      "code": "copyright_risk_ip",
+      "title": "1 videos reference high-risk kids IP",
+      "detail": "Titles/tags like Baby Shark are frequently claimed or limited. Prefer original Benny songs and public-domain nursery rhymes with original arrangements."
+    },
+    {
+      "severity": "high",
+      "code": "burst_publish",
+      "title": "4 videos published in the same minute",
+      "detail": "Dumping multiple Shorts within seconds looks like spam to the algorithm. Always use staggered --publish-at scheduling (already in run_daily_batch.py)."
+    },
+    {
+      "severity": "medium",
+      "code": "no_seed_audience",
+      "title": "No seed audience (1 subscriber)",
+      "detail": "New/reactivated channels need a few real watches from parents/friends in the first hours. Without that seed, MFK Shorts often stay at 0\u20132 views."
+    },
+    {
+      "severity": "medium",
+      "code": "analytics_api_disabled",
+      "title": "YouTube Analytics API not enabled",
+      "detail": "Impressions / CTR / traffic sources are unavailable until Analytics API is enabled in Google Cloud and yt-analytics.readonly is added to OAuth scopes. Without impressions we cannot tell '0 views because 0 impressions' vs 'shown but swiped'."
+    }
+  ],
+  "fix_actions": [],
+  "videos": [
+    {
+      "id": "qFB1WkEF__4",
+      "url": "https://youtube.com/shorts/qFB1WkEF__4",
+      "title": "Kindness Story for Kids | Kids Cartoon #shorts",
+      "description": "RATTLE RATTLE! Benny spots a wagon wobbling fast!\nA sweet moral lesson story where Benny helps a friend clean up.\nToddlers learn kindness, gentle words, and teamwork through cartoon play.\nSafe preschool story for kids ages 2-8 in American English.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-08T13:36:16Z",
+      "views": 1,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT34S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "24",
+      "tags": [
+        "benny story world",
+        "kids cartoon",
+        "kids lesson",
+        "kindness story for kids",
+        "moral story",
+        "nursery rhyme",
+        "preschool story",
+        "shorts",
+        "teamwork for kids"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": [
+        "burst_publish_same_minute"
+      ]
+    },
+    {
+      "id": "pBHQ7IJ9pJ4",
+      "url": "https://youtube.com/shorts/pBHQ7IJ9pJ4",
+      "title": "Bedtime Story for Kids | Kids Cartoon #shorts",
+      "description": "WOOF WHOOSH! The moon puppy tiptoes across fluffy clouds!\nA calming bedtime story for kids with Benny and a sleepy moon puppy.\nPerfect for toddlers who enjoy cozy cartoon stories before sleep.\nGentle American English narration for ages 2-8.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-08T13:36:33Z",
+      "views": 1,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT34S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "24",
+      "tags": [
+        "bedtime story",
+        "bedtime story for kids",
+        "benny story world",
+        "kids cartoon",
+        "kids story",
+        "moon puppy",
+        "nursery rhyme",
+        "shorts",
+        "sleep story"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": [
+        "burst_publish_same_minute"
+      ]
+    },
+    {
+      "id": "U3Ia6x6UNqw",
+      "url": "https://youtube.com/shorts/U3Ia6x6UNqw",
+      "title": "Old MacDonald Farm Animals Song | Kids Cartoon #shorts",
+      "description": "MOO MOO! Benny opens the big red barn door!\nSing farm animal sounds with Benny in an Old MacDonald style song.\nToddlers hear cow, pig, sheep, and duck sounds in a fun cartoon.\nKid-safe animal song for ages 2-8 in American English.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-08T13:36:46Z",
+      "views": 1,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT33S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "24",
+      "tags": [
+        "animal sounds",
+        "benny story world",
+        "farm animals song",
+        "kids cartoon",
+        "kids songs",
+        "nursery rhyme",
+        "old macdonald",
+        "shorts",
+        "toddler songs"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": [
+        "burst_publish_same_minute"
+      ]
+    },
+    {
+      "id": "RbXFozAurTw",
+      "url": "https://youtube.com/shorts/RbXFozAurTw",
+      "title": "ABC Song for Toddlers | Kids Cartoon #shorts",
+      "description": "TAP TAP! Benny stacks A, B, C up high!\nLearn ABC letters with toddlers in a bright preschool cartoon.\nBenny teaches simple first words from A to D with music and claps.\nEducational short for kids ages 2-8 in American English.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-08T13:36:54Z",
+      "views": 2,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT32S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "27",
+      "tags": [
+        "abc song",
+        "benny story world",
+        "educational videos for kids",
+        "kids cartoon",
+        "learn abc",
+        "learn letters",
+        "nursery rhyme",
+        "preschool learning",
+        "shorts"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": [
+        "burst_publish_same_minute"
+      ]
+    },
+    {
+      "id": "jrRrseRKvsg",
+      "url": "https://youtube.com/shorts/jrRrseRKvsg",
+      "title": "Baby Shark Dance Song | Kids Cartoon #shorts",
+      "description": "CLAP CLAP! Baby shark splashes UP and DOWN!\nSing and dance with Benny in a safe pretend ocean full of bubbles.\nToddlers practice taking turns while moving to a simple kids song.\nKid-safe nursery rhyme style cartoon for ages 2-8 in American English.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-09T05:00:23Z",
+      "views": 0,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT29S",
+      "privacy": "private",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "24",
+      "tags": [
+        "baby shark dance song",
+        "benny story world",
+        "kids cartoon",
+        "kids song",
+        "nursery rhyme",
+        "ocean animals",
+        "preschool music",
+        "shorts",
+        "sing along",
+        "toddler songs"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [
+        "baby\\s*shark"
+      ],
+      "issues": [
+        "zero_views",
+        "copyright_risk_ip",
+        "privacy_private"
+      ]
+    },
+    {
+      "id": "O2H8JtNmmR8",
+      "url": "https://youtube.com/shorts/O2H8JtNmmR8",
+      "title": "Bedtime Story for Kids Sleepy Firefly | Kids Cartoon #shorts",
+      "description": "GLOW GLOW! The firefly twinkles SOFT and SLOW!\nA calming bedtime story for kids with Benny and a gentle garden friend.\nToddlers hear soft words, slow breaths, and cozy good-night routines.\nSafe American English cartoon story for ages 2-8.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-09T07:00:37Z",
+      "views": 0,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT27S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "24",
+      "tags": [
+        "bedtime story",
+        "bedtime story for kids",
+        "benny story world",
+        "calming story",
+        "kids cartoon",
+        "kids story",
+        "nursery rhyme",
+        "shorts",
+        "sleep story",
+        "sleepy firefly"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": [
+        "zero_views"
+      ]
+    },
+    {
+      "id": "ZkCNdM1HWVI",
+      "url": "https://youtube.com/shorts/ZkCNdM1HWVI",
+      "title": "Learn Colors for Toddlers | Kids Cartoon #shorts",
+      "description": "TAP TAP! Benny points to RED and shouts HOORAY!\nLearn colors for toddlers with red apples, yellow bananas, and green pears.\nPreschool kids practice simple color words in a bright cartoon lesson.\nEducational American English Short for ages 2-8.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-09T09:00:38Z",
+      "views": 0,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT28S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "27",
+      "tags": [
+        "benny story world",
+        "colors for kids",
+        "educational videos for kids",
+        "fruit colors",
+        "kids cartoon",
+        "learn colors",
+        "learn colors for toddlers",
+        "nursery rhyme",
+        "preschool learning",
+        "shorts"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": [
+        "zero_views"
+      ]
+    },
+    {
+      "id": "9o5bXoFXlto",
+      "url": "https://youtube.com/shorts/9o5bXoFXlto",
+      "title": "Please and Thank You Story for Kids | Kids Cartoon #shorts",
+      "description": "TOOT TOOT! The toy train rolls FAST to Benny!\nA gentle moral lesson story where Benny practices please and thank you.\nToddlers learn polite words, kindness, and friendship through cartoon play.\nSafe preschool story for ages 2-8 in American English.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-09T11:00:03Z",
+      "views": 0,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT29S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "24",
+      "tags": [
+        "benny story world",
+        "kids cartoon",
+        "kids lesson",
+        "kindness for kids",
+        "moral story",
+        "nursery rhyme",
+        "please and thank you story for",
+        "polite words",
+        "preschool story",
+        "shorts"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": [
+        "zero_views"
+      ]
+    },
+    {
+      "id": "RgP2N8brAEQ",
+      "url": "https://youtube.com/shorts/RgP2N8brAEQ",
+      "title": "Farm Animals Song for Toddlers | Kids Cartoon #shorts",
+      "description": "DING DING! Benny rings the FARM BELL loud!\nSing farm animal sounds with Benny, a cow, a horse, a duck, and a sheep.\nToddlers practice listening and joining a fun morning animal song.\nKid-safe cartoon music for ages 2-8 in American English.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-09T13:00:06Z",
+      "views": 0,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT27S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "24",
+      "tags": [
+        "animal sounds",
+        "benny story world",
+        "farm animals",
+        "farm animals song for toddlers",
+        "kids cartoon",
+        "kids songs",
+        "nursery rhyme",
+        "old macdonald style",
+        "shorts",
+        "toddler songs"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": [
+        "zero_views"
+      ]
+    },
+    {
+      "id": "4A1qGR5btZw",
+      "url": "https://youtube.com/shorts/4A1qGR5btZw",
+      "title": "Wheels on the Bus Song for Toddlers | Kids Cartoon #shorts",
+      "description": "BEEP BEEP! The bus goes ROUND and ROUND!\nSing the Wheels on the Bus Song with Benny in a bright toddler cartoon.\nKids hear the horn, doors, and wipers while learning safe riding words.\nFun American English nursery rhyme for preschool children ages 2-8.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-10T05:00:06Z",
+      "views": 0,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT32S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "24",
+      "tags": [
+        "benny story world",
+        "bus song for toddlers",
+        "kids cartoon",
+        "kids song",
+        "nursery rhyme",
+        "preschool music",
+        "shorts",
+        "toddler songs",
+        "wheels on the bus",
+        "wheels on the bus song"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": [
+        "zero_views"
+      ]
+    },
+    {
+      "id": "W3K1EB65d38",
+      "url": "https://youtube.com/shorts/W3K1EB65d38",
+      "title": "Bedtime Story for Kids: Cloud Train Dreams | Kids Cartoon #shorts",
+      "description": "CHOO CHOO! The cloud train floats soft and slow!\nA gentle bedtime story for kids with Benny, Teddy, and a sleepy cloud train.\nToddlers practice calm breathing and cozy bedtime words before sleep.\nKid-safe American English cartoon story for ages 2-8.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-10T07:00:24Z",
+      "views": 0,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT33S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "24",
+      "tags": [
+        "bedtime story",
+        "bedtime story for kids",
+        "benny story world",
+        "cloud train",
+        "kids cartoon",
+        "kids story",
+        "nursery rhyme",
+        "shorts",
+        "sleep story",
+        "toddler bedtime"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": [
+        "zero_views"
+      ]
+    },
+    {
+      "id": "ec_zLhdMbKU",
+      "url": "https://youtube.com/shorts/ec_zLhdMbKU",
+      "title": "Learn Colors for Toddlers with Benny | Kids Cartoon #shorts",
+      "description": "POP POP! Benny finds colors in the air!\nLearn colors for toddlers with red, yellow, blue, and green bubble play.\nBenny uses simple preschool words, pointing, and repetition for early learning.\nEducational American English cartoon for kids ages 2-8.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-10T09:00:29Z",
+      "views": 0,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT31S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "27",
+      "tags": [
+        "benny story world",
+        "color song",
+        "colors for toddlers",
+        "educational videos for kids",
+        "kids cartoon",
+        "learn colors",
+        "learn colors for toddlers",
+        "nursery rhyme",
+        "preschool learning",
+        "shorts"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": [
+        "zero_views"
+      ]
+    },
+    {
+      "id": "Bkrlb-HqS6A",
+      "url": "https://youtube.com/shorts/Bkrlb-HqS6A",
+      "title": "Sharing Lesson Story for Kids | Kids Cartoon #shorts",
+      "description": "CRUNCH CRUNCH! The cookie plate wiggles on the table!\nA sweet moral lesson story where Benny shares a cookie with friends.\nToddlers learn thank you, kindness, and taking turns in a safe cartoon.\nGentle American English story for preschool kids ages 2-8.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-10T11:00:14Z",
+      "views": 1,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT34S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "24",
+      "tags": [
+        "benny story world",
+        "kids cartoon",
+        "kids lesson",
+        "kindness story for kids",
+        "moral story",
+        "nursery rhyme",
+        "preschool story",
+        "sharing lesson for kids",
+        "sharing lesson story",
+        "shorts"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": []
+    },
+    {
+      "id": "H-yoP7wbQ5M",
+      "url": "https://youtube.com/shorts/H-yoP7wbQ5M",
+      "title": "Farm Animals Song for Toddlers | Kids Cartoon #shorts",
+      "description": "VROOM MOO! Benny's tractor rolls by the barn!\nSing a farm animals song for toddlers with cow, duck, sheep, and horse sounds.\nKids practice listening and repeating animal sounds in a bright cartoon.\nKid-safe American English nursery rhyme for preschool ages 2-8.\n#shorts #kidssongs #preschool #toddler",
+      "published": "2026-07-10T13:00:10Z",
+      "views": 0,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT31S",
+      "privacy": "public",
+      "uploadStatus": "processed",
+      "madeForKids": true,
+      "selfDeclaredMadeForKids": true,
+      "categoryId": "24",
+      "tags": [
+        "animal sounds",
+        "benny story world",
+        "farm animal sounds",
+        "farm animals song",
+        "farm animals song for toddlers",
+        "kids cartoon",
+        "kids songs",
+        "nursery rhyme",
+        "shorts",
+        "toddler songs"
+      ],
+      "banned_tags": [],
+      "copyright_risk": [],
+      "issues": [
+        "zero_views"
+      ]
+    }
+  ]
+}

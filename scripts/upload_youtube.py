@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from config.settings import ANALYTICS_DIR, VIDEOS_DIR, ensure_dirs
+from scripts.seo_guardrails import assert_safe_metadata
 from scripts.youtube_client import get_youtube_service
 
 
@@ -23,11 +24,13 @@ def load_metadata(metadata_path: Path) -> dict:
     missing = [k for k in required if not data.get(k)]
     if missing:
         raise ValueError(f"Metadata missing fields: {missing}")
+    assert_safe_metadata(data)
     return data
 
 
 def upload_video(video_path: Path, metadata: dict, publish_at: str | None = None) -> dict:
     youtube = get_youtube_service()
+    assert_safe_metadata(metadata)
     status = {
         "selfDeclaredMadeForKids": True,
         "privacyStatus": metadata.get("privacyStatus", "public"),
@@ -35,6 +38,9 @@ def upload_video(video_path: Path, metadata: dict, publish_at: str | None = None
     if publish_at:
         status["privacyStatus"] = "private"
         status["publishAt"] = publish_at
+    # Realistic AI/deepfake disclosure — only when metadata opts in (premium 3D).
+    if metadata.get("containsSyntheticMedia") is True:
+        status["containsSyntheticMedia"] = True
 
     body = {
         "snippet": {
@@ -78,6 +84,9 @@ def main() -> None:
 
     ensure_dirs()
     video_path = VIDEOS_DIR / f"{file_id}.mp4"
+    thumb_path = VIDEOS_DIR / f"{file_id}-thumb.mp4"
+    if thumb_path.exists():
+        video_path = thumb_path
     metadata_path = Path(args.metadata) if args.metadata else VIDEOS_DIR / f"{file_id}-metadata.json"
     upload_log = ANALYTICS_DIR / f"{file_id}-upload.json"
 
