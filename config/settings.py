@@ -16,6 +16,10 @@ VIDEO_WIDTH = 1080
 VIDEO_HEIGHT = 1920
 VIDEO_FPS = 30
 
+# Kino Go TV movie edits — 4K vertical Shorts
+KINOGO_VIDEO_WIDTH = 2160
+KINOGO_VIDEO_HEIGHT = 3840
+
 YOUTUBE_SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
     "https://www.googleapis.com/auth/youtube.readonly",

@@ -46,6 +46,8 @@ def main() -> None:
     parser.add_argument("--url", help="Process one URL immediately (ignores queue)")
     parser.add_argument("--hook", help="Hook text for --url run")
     parser.add_argument("--title", help="Title hint for --url run")
+    parser.add_argument("--music", help="Music credit label")
+    parser.add_argument("--music-url", help="Optional background music URL")
     parser.add_argument("--skip-upload", action="store_true")
     parser.add_argument("--dry-run", action="store_true", help="Show next job only")
     args = parser.parse_args()
@@ -55,7 +57,12 @@ def main() -> None:
     scripts = ROOT / "scripts"
 
     if args.url:
-        job = {"url": args.url, "hook": args.hook, "title_hint": args.title}
+        job = {
+            "url": args.url,
+            "hook": args.hook,
+            "title_hint": args.title,
+            "music": args.music,
+        }
         queue = None
     else:
         queue = load_queue()
@@ -74,6 +81,10 @@ def main() -> None:
         cmd.extend(["--hook", job["hook"]])
     if job.get("title_hint"):
         cmd.extend(["--title", job["title_hint"]])
+    if job.get("music"):
+        cmd.extend(["--music", job["music"]])
+    if job.get("music_url"):
+        cmd.extend(["--music-url", job["music_url"]])
 
     run(cmd)
 

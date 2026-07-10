@@ -73,7 +73,7 @@ def _dedupe_tags(tags: list[str]) -> list[str]:
     return out[:15]
 
 
-def build_video_metadata(title: str, existing_desc: str = "") -> dict:
+def build_video_metadata(title: str, existing_desc: str = "", music: str = "") -> dict:
     """Return snippet fields: description, tags, categoryId."""
     extra_tags: list[str] = []
     hook = title.strip()
@@ -94,8 +94,13 @@ def build_video_metadata(title: str, existing_desc: str = "") -> dict:
 
     tags = _dedupe_tags(BASE_TAGS + extra_tags)
 
+    music_line = f"\n🎵 Music Used: {music.strip()}" if music and music.strip() else ""
+    edit_line = "\n🛠️ Edited with: After Effects style pipeline"
+
     if existing_desc and len(existing_desc.strip()) > 80:
         description = existing_desc.strip()
+        if music_line and "Music Used" not in description:
+            description += music_line
         if "Kino Go TV" not in description:
             description += f"\n\n🎬 Kino Go TV — movie Shorts & cinema edits{lang_note}\n#shorts #movies #cinema #film"
     else:
@@ -103,6 +108,7 @@ def build_video_metadata(title: str, existing_desc: str = "") -> dict:
             f"{hook}\n\n"
             "🎬 Kino Go TV — movie Shorts, slowed edits & viral cinema moments.\n"
             "New film clips every day. Subscribe so you don't miss the next scene!"
+            f"{music_line}{edit_line}"
             f"{lang_note}\n\n"
             "#shorts #movies #cinema #film #movieedits #filmedit #kino"
         )
