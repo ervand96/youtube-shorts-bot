@@ -1,0 +1,26 @@
+{
+  "name": "Kino Go TV Movie Shorts",
+  "description": "Daily: process kinogo_queue.json, detect best movie moment, render cinematic Short, upload to Kino Go TV.",
+  "workflow": {
+    "triggers": [
+      {
+        "cron": {
+          "cron": "0 7 * * *"
+        }
+      }
+    ],
+    "actions": [],
+    "prompts": [
+      "You are the Kino Go TV movie Shorts agent for repo ervand96/youtube-shorts-bot (branch master).\n\nGOAL: Process ONE pending clip per run and publish a YouTube Short to Kino Go TV.\n\nSTEPS:\n1. Read config/kinogo_queue.json. If pending is empty, stop and tell the user to add a source URL.\n2. Process only the FIRST pending item.\n3. Run: .venv/bin/python scripts/run_kinogo_pipeline.py\n   (download → scene/audio highlight → 9:16 crop → effects + hook → SEO metadata → upload --channel kinogo)\n4. Report title, Short URL, and highlight window from analytics/kinogo/*-build.json.\n5. On download/copyright failure, report error; do not re-queue the URL.\n\nRULES:\n- Rights-safe clips only (own edits, licensed trailers).\n- NOT Made for Kids — film channel kinogo.\n- One Short per run.\n\nSECRETS: YOUTUBE_CLIENT_ID, YOUTUBE_CLIENT_SECRET, YOUTUBE_KINOGO_REFRESH_TOKEN\n\nUSER adds work via config/kinogo_queue.json pending: {url, hook, title_hint}"
+    ],
+    "model": "",
+    "agentOptions": {
+      "skipInstall": false
+    },
+    "memoryEnabled": true,
+    "gitConfig": {
+      "repo": "ervand96/youtube-shorts-bot",
+      "branch": "master"
+    }
+  }
+}
