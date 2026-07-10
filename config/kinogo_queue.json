@@ -1,11 +1,25 @@
 {
   "pending": [
     {
-      "url": "https://www.youtube.com/watch?v=EXAMPLE",
-      "hook": "EXACTLY.",
-      "title_hint": "Passenger 57 villain moment",
-      "notes": "Replace URL with your movie clip or trailer link"
+      "url": "https://www.youtube.com/watch?v=6iG8SrAt_YU",
+      "hook": "Nobody saw this coming.",
+      "title_hint": "Passenger 57 hijacking scene",
+      "notes": "Warner Bros. Rewind official clip — 10 min source"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=pVcODohY8mc",
+      "hook": "He planned everything.",
+      "title_hint": "Passenger 57 Charles Rane escape",
+      "notes": "Escape scene — good audio peaks for highlight detection"
     }
   ],
-  "processed": []
+  "processed": [
+    {
+      "url": "https://www.youtube.com/watch?v=-wIe0vvT9AI",
+      "hook": "EXACTLY.",
+      "title_hint": "Passenger 57 Bruce Payne villain moment",
+      "notes": "HeeroExE clip — 6 min source; matches top Kino Go Short (EXACTLY)",
+      "file_id": "kinogo-2026-07-11-1"
+    }
+  ]
 }
