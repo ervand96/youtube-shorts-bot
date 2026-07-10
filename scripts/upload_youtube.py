@@ -13,28 +13,40 @@ from googleapiclient.http import MediaFileUpload
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from config.settings import ANALYTICS_DIR, VIDEOS_DIR, ensure_dirs
+from config.settings import ANALYTICS_DIR, VIDEOS_DIR, ensure_dirs, resolve_channel
 from scripts.seo_guardrails import assert_safe_metadata
 from scripts.youtube_client import get_youtube_service
 
 
-def load_metadata(metadata_path: Path) -> dict:
+def load_metadata(metadata_path: Path, channel: str = "benny") -> dict:
     data = json.loads(metadata_path.read_text(encoding="utf-8"))
     required = ["title", "description", "tags"]
     missing = [k for k in required if not data.get(k)]
     if missing:
         raise ValueError(f"Metadata missing fields: {missing}")
-    assert_safe_metadata(data)
+    if resolve_channel(channel)["key"] == "benny":
+        assert_safe_metadata(data)
     return data
 
 
-def upload_video(video_path: Path, metadata: dict, publish_at: str | None = None) -> dict:
-    youtube = get_youtube_service()
-    assert_safe_metadata(metadata)
+def upload_video(
+    video_path: Path,
+    metadata: dict,
+    publish_at: str | None = None,
+    channel: str = "benny",
+) -> dict:
+    youtube = get_youtube_service(channel)
+    profile = resolve_channel(channel)
+    if profile["key"] == "benny":
+        assert_safe_metadata(metadata)
     status = {
-        "selfDeclaredMadeForKids": True,
         "privacyStatus": metadata.get("privacyStatus", "public"),
     }
+    # Kids channel only — Kino Go TV is general-audience film content
+    if profile["key"] == "benny":
+        status["selfDeclaredMadeForKids"] = True
+    else:
+        status["selfDeclaredMadeForKids"] = metadata.get("madeForKids", False)
     if publish_at:
         status["privacyStatus"] = "private"
         status["publishAt"] = publish_at
@@ -42,12 +54,17 @@ def upload_video(video_path: Path, metadata: dict, publish_at: str | None = None
     if metadata.get("containsSyntheticMedia") is True:
         status["containsSyntheticMedia"] = True
 
+    if profile["key"] == "benny":
+        category = str(metadata.get("categoryId", "24"))
+    else:
+        category = str(metadata.get("categoryId", "1"))
+
     body = {
         "snippet": {
             "title": metadata["title"][:100],
             "description": metadata["description"],
             "tags": metadata["tags"],
-            "categoryId": str(metadata.get("categoryId", "24")),
+            "categoryId": category,
         },
         "status": status,
     }
@@ -77,6 +94,7 @@ def main() -> None:
     parser.add_argument("--date", help="Legacy date id")
     parser.add_argument("--metadata", help="Metadata JSON path override")
     parser.add_argument("--publish-at", help="RFC3339 UTC schedule e.g. 2026-07-09T05:00:00Z")
+    parser.add_argument("--channel", default="benny", help="OAuth profile: benny or kinogo")
     args = parser.parse_args()
     file_id = args.id or args.date
     if not file_id:
@@ -95,8 +113,8 @@ def main() -> None:
     if not metadata_path.exists():
         raise FileNotFoundError(metadata_path)
 
-    metadata = load_metadata(metadata_path)
-    result = upload_video(video_path, metadata, publish_at=args.publish_at)
+    metadata = load_metadata(metadata_path, channel=args.channel)
+    result = upload_video(video_path, metadata, publish_at=args.publish_at, channel=args.channel)
     upload_log.write_text(json.dumps(result, indent=2), encoding="utf-8")
     print(json.dumps(result, indent=2))
 

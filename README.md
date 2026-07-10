@@ -88,6 +88,19 @@ python scripts/youtube_whoami.py
 
 Paste the printed `YOUTUBE_KINOGO_REFRESH_TOKEN=...` into `.env`.
 
+## Kino Go TV — optimize for views
+
+```bash
+# Preview changes (dry-run)
+python scripts/setup_kinogo_channel.py
+
+# Apply live: channel SEO, video tags/descriptions, playlists, hide off-niche
+python scripts/setup_kinogo_channel.py --apply
+
+# Upload a Short to Kino Go TV
+python scripts/upload_youtube.py --id 2026-07-11-1 --channel kinogo
+```
+
 ## Diagnose zero views / reach
 
 Uses the free YouTube Data API only (no Analytics API / billing needed):

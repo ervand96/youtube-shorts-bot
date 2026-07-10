@@ -16,8 +16,8 @@ from config.settings import ANALYTICS_DIR, ensure_dirs
 from scripts.youtube_client import get_youtube_service
 
 
-def fetch_stats(video_id: str) -> dict:
-    youtube = get_youtube_service()
+def fetch_stats(video_id: str, channel: str = "benny") -> dict:
+    youtube = get_youtube_service(channel)
     response = (
         youtube.videos()
         .list(part="snippet,statistics", id=video_id)
@@ -78,6 +78,7 @@ def main() -> None:
     parser.add_argument("--id", help="File id e.g. 2026-07-09-1")
     parser.add_argument("--date", help="Legacy date id")
     parser.add_argument("--video-id", help="YouTube video ID override")
+    parser.add_argument("--channel", default="benny", help="OAuth profile: benny or kinogo")
     args = parser.parse_args()
     file_id = args.id or args.date
     if not file_id:
@@ -94,7 +95,7 @@ def main() -> None:
             raise FileNotFoundError(f"Missing upload log: {upload_log}")
         video_id = json.loads(upload_log.read_text(encoding="utf-8"))["video_id"]
 
-    stats = fetch_stats(video_id)
+    stats = fetch_stats(video_id, channel=args.channel)
     stats_path.write_text(json.dumps(stats, indent=2), encoding="utf-8")
     update_top_topics(stats, metadata_path if metadata_path.exists() else None)
     write_summary(file_id, stats)
