@@ -30,11 +30,8 @@ from scripts.ensure_music import ensure_music
 from scripts.kinogo_seo import build_video_metadata
 from scripts.movie_scene_detector import pick_highlight, probe_duration
 
-# Render overlays at 1080p (fast), upscale final output to 4K Shorts.
-WORK_W = 1080
-WORK_H = 1920
-FINAL_W = KINOGO_VIDEO_WIDTH
-FINAL_H = KINOGO_VIDEO_HEIGHT
+WORK_W = KINOGO_VIDEO_WIDTH
+WORK_H = KINOGO_VIDEO_HEIGHT
 
 FONT_CANDIDATES = [
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
@@ -64,7 +61,7 @@ def download_source(url: str, dest: Path) -> dict:
     cmd = [
         yt_dlp_bin(),
         "-f",
-        "bestvideo[height<=2160]+bestaudio/best[height<=2160]/best",
+        "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
         "--merge-output-format",
         "mp4",
         "--print",
@@ -387,30 +384,6 @@ def _apply_overlays(base: Path, overlays: list[tuple[Path, str]], output: Path) 
     subprocess.run(cmd, check=True)
 
 
-def _upscale_to_4k(source: Path, output: Path) -> None:
-    cmd = [
-        "ffmpeg",
-        "-y",
-        "-hide_banner",
-        "-i",
-        str(source),
-        "-vf",
-        f"scale={FINAL_W}:{FINAL_H}:flags=lanczos,unsharp=5:5:0.6:5:5:0.0",
-        "-c:v",
-        "libx264",
-        "-preset",
-        "fast",
-        "-crf",
-        "16",
-        "-c:a",
-        "copy",
-        "-movflags",
-        "+faststart",
-        str(output),
-    ]
-    subprocess.run(cmd, check=True)
-
-
 def render_short(
     source: Path,
     output: Path,
@@ -513,9 +486,7 @@ def render_short(
             subprocess.run(mix_cmd, check=True)
             current = mixed
 
-        final = tmp_path / "final.mp4"
-        _upscale_to_4k(current, final)
-        shutil.copy2(final, output)
+        shutil.copy2(current, output)
 
 
 def write_metadata(
@@ -613,7 +584,7 @@ def main() -> None:
             "title": title,
             "music": music_label,
             "subtitles": len(subtitles),
-            "resolution": f"{FINAL_W}x{FINAL_H}",
+            "resolution": f"{WORK_W}x{WORK_H}",
             "highlight": {
                 "start": highlight.start,
                 "duration": highlight.duration,
