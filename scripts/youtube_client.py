@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Shared YouTube API credential helpers."""
+"""Shared YouTube API credential helpers (multi-channel)."""
 
 from __future__ import annotations
 
@@ -17,10 +17,12 @@ sys.path.insert(0, str(ROOT))
 from config.settings import (  # noqa: E402
     CLIENT_SECRETS_PATH,
     CREDENTIALS_DIR,
-    TOKEN_PATH,
     YOUTUBE_SCOPES,
     ensure_dirs,
     get_env,
+    load_dotenv,
+    resolve_channel,
+    token_path_for,
 )
 
 
@@ -40,23 +42,35 @@ def _client_config_from_env() -> dict | None:
     }
 
 
-def load_credentials() -> Credentials:
-    ensure_dirs()
-    creds: Credentials | None = None
+def _refresh_token_env_key(channel: str) -> str:
+    meta = resolve_channel(channel)
+    return meta["refresh_env"]
 
-    if TOKEN_PATH.exists():
-        creds = Credentials.from_authorized_user_file(str(TOKEN_PATH), YOUTUBE_SCOPES)
+
+def load_credentials(channel: str = "benny") -> Credentials:
+    load_dotenv()
+    ensure_dirs()
+    meta = resolve_channel(channel)
+    path = token_path_for(channel)
+    refresh_env = meta["refresh_env"]
+
+    creds: Credentials | None = None
+    if path.exists():
+        creds = Credentials.from_authorized_user_file(str(path), YOUTUBE_SCOPES)
 
     if creds and creds.expired and creds.refresh_token:
         creds.refresh(Request())
-        TOKEN_PATH.write_text(creds.to_json())
+        path.write_text(creds.to_json())
 
     if creds and creds.valid:
         return creds
 
-    refresh_token = get_env("YOUTUBE_REFRESH_TOKEN")
-    client_config = _client_config_from_env()
+    refresh_token = get_env(refresh_env)
+    # Benny/default also accepts legacy YOUTUBE_REFRESH_TOKEN if alias-specific missing
+    if not refresh_token and meta["key"] == "benny":
+        refresh_token = get_env("YOUTUBE_REFRESH_TOKEN")
 
+    client_config = _client_config_from_env()
     if refresh_token and client_config:
         creds = Credentials(
             token=None,
@@ -67,21 +81,43 @@ def load_credentials() -> Credentials:
             scopes=YOUTUBE_SCOPES,
         )
         creds.refresh(Request())
-        TOKEN_PATH.write_text(creds.to_json())
+        path.write_text(creds.to_json())
         return creds
 
     raise RuntimeError(
-        "YouTube credentials missing. Run setup_youtube_auth.py or set "
-        "YOUTUBE_CLIENT_ID, YOUTUBE_CLIENT_SECRET, YOUTUBE_REFRESH_TOKEN."
+        f"YouTube credentials missing for channel '{meta['key']}'. "
+        f"Run: .venv/bin/python scripts/setup_youtube_auth.py --channel {meta['key']}\n"
+        f"Or set YOUTUBE_CLIENT_ID, YOUTUBE_CLIENT_SECRET, {refresh_env}."
     )
 
 
-def get_youtube_service():
-    return build("youtube", "v3", credentials=load_credentials())
+def get_youtube_service(channel: str = "benny"):
+    return build("youtube", "v3", credentials=load_credentials(channel))
 
 
 def save_client_secrets_from_env() -> None:
+    load_dotenv()
     config = _client_config_from_env()
     if config:
         CREDENTIALS_DIR.mkdir(parents=True, exist_ok=True)
         CLIENT_SECRETS_PATH.write_text(json.dumps(config, indent=2))
+
+
+def whoami(channel: str = "benny") -> dict:
+    """Return the authenticated channel identity for a profile."""
+    youtube = get_youtube_service(channel)
+    resp = youtube.channels().list(part="snippet,statistics,status", mine=True).execute()
+    items = resp.get("items") or []
+    if not items:
+        raise RuntimeError(f"No YouTube channel for profile '{channel}'")
+    ch = items[0]
+    return {
+        "profile": resolve_channel(channel)["key"],
+        "id": ch["id"],
+        "title": ch["snippet"]["title"],
+        "customUrl": ch["snippet"].get("customUrl"),
+        "subs": ch["statistics"].get("subscriberCount"),
+        "views": ch["statistics"].get("viewCount"),
+        "videos": ch["statistics"].get("videoCount"),
+        "madeForKids": ch["status"].get("madeForKids"),
+    }

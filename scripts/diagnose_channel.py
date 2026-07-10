@@ -22,6 +22,13 @@ from scripts.youtube_client import get_youtube_service
 OUT_PATH = ROOT / "analytics" / "channel-diagnosis-live.json"
 
 
+def diagnosis_out_path(channel: str) -> Path:
+    if channel in {"benny", "kids", "default"}:
+        return OUT_PATH
+    safe = channel.replace(" ", "-").lower()
+    return ROOT / "analytics" / f"channel-diagnosis-{safe}.json"
+
+
 def list_all_uploads(youtube) -> list[str]:
     ch = youtube.channels().list(part="contentDetails", mine=True).execute()["items"][0]
     uploads = ch["contentDetails"]["relatedPlaylists"]["uploads"]
@@ -263,6 +270,11 @@ def unpublish_copyright_risk(youtube, rows: list[dict], dry_run: bool = False) -
 def main() -> None:
     parser = argparse.ArgumentParser(description="Diagnose YouTube channel reach problems")
     parser.add_argument(
+        "--channel",
+        default="benny",
+        help="OAuth profile: benny (kids) or kinogo (Kino Go TV)",
+    )
+    parser.add_argument(
         "--fix-tags",
         action="store_true",
         help="Remove banned brand tags from live videos",
@@ -275,7 +287,7 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true", help="With fix flags, only print")
     args = parser.parse_args()
 
-    youtube = get_youtube_service()
+    youtube = get_youtube_service(args.channel)
     ch = youtube.channels().list(part="snippet,statistics,status", mine=True).execute()["items"][0]
     channel = {
         "id": ch["id"],
@@ -307,8 +319,10 @@ def main() -> None:
         for row in rows:
             score_video(row, burst_ids)
 
+    out_path = diagnosis_out_path(args.channel)
     report = {
         "fetched_at": datetime.now(timezone.utc).isoformat(),
+        "profile": args.channel,
         "channel": channel,
         "summary": {
             "videos": len(rows),
@@ -322,10 +336,10 @@ def main() -> None:
         "fix_actions": actions,
         "videos": rows,
     }
-    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUT_PATH.write_text(json.dumps(report, indent=2), encoding="utf-8")
-    print(json.dumps({"summary": report["summary"], "findings": findings, "fix_actions": actions}, indent=2))
-    print(f"\nWrote {OUT_PATH}")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    print(json.dumps({"profile": args.channel, "summary": report["summary"], "findings": findings, "fix_actions": actions}, indent=2))
+    print(f"\nWrote {out_path}")
 
 
 if __name__ == "__main__":

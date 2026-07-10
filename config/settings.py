@@ -22,6 +22,62 @@ YOUTUBE_SCOPES = [
     "https://www.googleapis.com/auth/youtube.force-ssl",
 ]
 
+# Multi-channel OAuth profiles. Each keeps its own token + refresh env var.
+YOUTUBE_CHANNELS = {
+    "benny": {
+        "key": "benny",
+        "label": "Benny's Story World",
+        "token_file": "token.json",  # legacy default path
+        "refresh_env": "YOUTUBE_REFRESH_TOKEN",
+    },
+    "kinogo": {
+        "key": "kinogo",
+        "label": "Kino Go TV",
+        "token_file": "token-kinogo.json",
+        "refresh_env": "YOUTUBE_KINOGO_REFRESH_TOKEN",
+    },
+}
+
+_CHANNEL_ALIASES = {
+    "benny": "benny",
+    "kids": "benny",
+    "default": "benny",
+    "kinogo": "kinogo",
+    "kino": "kinogo",
+    "kino_gotv": "kinogo",
+    "kino-go-tv": "kinogo",
+    "kino go tv": "kinogo",
+}
+
+
+def load_dotenv(path: Path | None = None) -> None:
+    """Load KEY=VALUE pairs from .env into os.environ (does not override existing)."""
+    env_path = path or (ROOT / ".env")
+    if not env_path.exists():
+        return
+    for raw in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
+def resolve_channel(name: str | None = None) -> dict:
+    key = _CHANNEL_ALIASES.get((name or "benny").strip().lower(), "")
+    if not key:
+        known = ", ".join(sorted(YOUTUBE_CHANNELS))
+        raise ValueError(f"Unknown YouTube channel '{name}'. Use one of: {known}")
+    return YOUTUBE_CHANNELS[key]
+
+
+def token_path_for(channel: str | None = None) -> Path:
+    meta = resolve_channel(channel)
+    return CREDENTIALS_DIR / meta["token_file"]
+
 
 def ensure_dirs() -> None:
     for path in (SCRIPTS_DIR, AUDIO_DIR, VIDEOS_DIR, ANALYTICS_DIR, ASSETS_DIR, CREDENTIALS_DIR):
@@ -29,6 +85,7 @@ def ensure_dirs() -> None:
 
 
 def get_env(name: str, default: str = "") -> str:
+    load_dotenv()
     return os.environ.get(name, default).strip()
 
 

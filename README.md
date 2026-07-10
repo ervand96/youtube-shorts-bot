@@ -69,13 +69,35 @@ python scripts/run_pipeline.py --date 2026-07-07
 python scripts/run_pipeline.py --date 2026-07-07 --skip-upload
 ```
 
+## Multi-channel YouTube auth
+
+Two OAuth profiles are supported:
+
+| Profile | Channel | Token file | Env refresh token |
+|---------|---------|------------|-------------------|
+| `benny` (default) | Benny's Story World | `credentials/token.json` | `YOUTUBE_REFRESH_TOKEN` |
+| `kinogo` | Kino Go TV | `credentials/token-kinogo.json` | `YOUTUBE_KINOGO_REFRESH_TOKEN` |
+
+```bash
+# Authorize Kino Go TV (login with THAT channel's Google account)
+python scripts/setup_youtube_auth.py --channel kinogo
+
+# Check which channel each profile sees
+python scripts/youtube_whoami.py
+```
+
+Paste the printed `YOUTUBE_KINOGO_REFRESH_TOKEN=...` into `.env`.
+
 ## Diagnose zero views / reach
 
 Uses the free YouTube Data API only (no Analytics API / billing needed):
 
 ```bash
-# Live channel health report → analytics/channel-diagnosis-live.json
+# Benny (default)
 python scripts/diagnose_channel.py
+
+# Kino Go TV
+python scripts/diagnose_channel.py --channel kinogo
 
 # Strip banned brand tags + unpublish copyright-risk Shorts
 python scripts/diagnose_channel.py --fix-tags --unpublish-risky
