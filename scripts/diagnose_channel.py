@@ -127,30 +127,37 @@ def build_findings(channel: dict, rows: list[dict]) -> list[dict]:
     banned = sum(1 for r in rows if r["banned_tags"])
     copyrighted = sum(1 for r in rows if r["copyright_risk"])
     burst = sum(1 for r in rows if "burst_publish_same_minute" in r["issues"])
+    avg_views = (total_views / len(rows)) if rows else 0
 
-    findings = [
-        {
-            "severity": "critical",
-            "code": "cold_start_no_impressions",
-            "title": "Almost no distribution yet",
-            "detail": (
-                f"Channel has {channel['videoCount']} videos but only {channel['views']} "
-                f"channel views ({total_views} summed on videos). {zero}/{len(rows)} Shorts "
-                "still sit at 0 views — YouTube is barely testing them in the Shorts feed."
-            ),
-        },
-        {
-            "severity": "critical",
-            "code": "made_for_kids_limits_shorts_feed",
-            "title": "Made for Kids limits Shorts feed reach",
-            "detail": (
-                "Channel and every video are Made for Kids (required for this niche under COPPA). "
-                "MFK disables comments/notifications and blocks personalized Shorts targeting, "
-                "so growth is much slower than general-audience Shorts. Do NOT flip this off — "
-                "kids content must stay MFK. Expect search + parent shares + YouTube Kids, not viral Shorts."
-            ),
-        },
-    ]
+    findings = []
+    if zero >= max(1, len(rows) // 2) or avg_views < 5:
+        findings.append(
+            {
+                "severity": "critical",
+                "code": "cold_start_no_impressions",
+                "title": "Almost no distribution yet",
+                "detail": (
+                    f"Channel has {channel['videoCount']} videos but only {channel['views']} "
+                    f"channel views ({total_views} summed on videos). {zero}/{len(rows)} Shorts "
+                    "still sit at 0 views — YouTube is barely testing them in the Shorts feed."
+                ),
+            }
+        )
+
+    if channel.get("madeForKids") or channel.get("selfDeclaredMadeForKids"):
+        findings.append(
+            {
+                "severity": "critical",
+                "code": "made_for_kids_limits_shorts_feed",
+                "title": "Made for Kids limits Shorts feed reach",
+                "detail": (
+                    "Channel and videos are Made for Kids (required for kids niches under COPPA). "
+                    "MFK disables comments/notifications and blocks personalized Shorts targeting, "
+                    "so growth is much slower than general-audience Shorts. Do NOT flip this off for "
+                    "kids content. Expect search + parent shares + YouTube Kids, not viral Shorts."
+                ),
+            }
+        )
 
     if banned:
         findings.append(
