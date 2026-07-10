@@ -96,9 +96,32 @@ python scripts/setup_kinogo_channel.py
 
 # Apply live: channel SEO, video tags/descriptions, playlists, hide off-niche
 python scripts/setup_kinogo_channel.py --apply
+```
 
-# Upload a Short to Kino Go TV
-python scripts/upload_youtube.py --id 2026-07-11-1 --channel kinogo
+## Kino Go TV — movie Shorts automation pipeline
+
+Add a source URL to `config/kinogo_queue.json`, then:
+
+```bash
+# Build one Short from queue (analyze scenes → best moment → effects → upload)
+python scripts/run_kinogo_pipeline.py
+
+# Or process a URL directly
+python scripts/run_kinogo_pipeline.py --url "https://youtube.com/watch?v=..." --hook "EXACTLY."
+
+# Render only (no upload)
+python scripts/run_kinogo_pipeline.py --url "..." --skip-upload
+```
+
+Pipeline steps:
+1. `movie_scene_detector.py` — scene cuts + audio peaks → best 28–50s window
+2. `build_movie_short.py` — 9:16 crop, contrast, zoom pulse, vignette, hook text
+3. `kinogo_seo.py` — Film category tags/description
+4. `upload_youtube.py --channel kinogo`
+
+```bash
+# Upload a Short to Kino Go TV manually
+python scripts/upload_youtube.py --id kinogo-2026-07-11-1 --channel kinogo
 ```
 
 ## Diagnose zero views / reach
