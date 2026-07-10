@@ -103,26 +103,31 @@ python scripts/setup_kinogo_channel.py --apply
 Add a source URL to `config/kinogo_queue.json`, then:
 
 ```bash
-# Build one Short from queue (analyze scenes → best moment → effects → upload)
 python scripts/run_kinogo_pipeline.py
+```
 
-# Or process a URL directly
-python scripts/run_kinogo_pipeline.py --url "https://youtube.com/watch?v=..." --hook "EXACTLY."
+### Cursor Automation (нужно сохранить вручную)
 
-# Render only (no upload)
-python scripts/run_kinogo_pipeline.py --url "..." --skip-upload
+Агент **не может** нажать Save за тебя — только открыть форму с prefill.
+
+1. **Cursor → Automations → New** (форма должна быть открыта)
+2. Сверь с `config/kinogo_automation.json`:
+   - Name: **Kino Go TV Movie Shorts**
+   - Trigger: cron **`0 7 * * *`** (11:00 UTC+4)
+   - Repo: **ervand96/youtube-shorts-bot** / **master**
+   - Prompt: скопируй из `workflow.prompts[0]` в том же файле
+3. Secrets: `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`, `YOUTUBE_KINOGO_REFRESH_TOKEN`
+4. **Save & Activate**
+
+```bash
+python scripts/run_kinogo_pipeline.py --url "https://youtube.com/watch?v=..." --hook "EXACTLY." --skip-upload
 ```
 
 Pipeline steps:
 1. `movie_scene_detector.py` — scene cuts + audio peaks → best 28–50s window
-2. `build_movie_short.py` — 9:16 crop, contrast, zoom pulse, vignette, hook text
+2. `build_movie_short.py` — 9:16 crop, contrast, vignette, hook overlay
 3. `kinogo_seo.py` — Film category tags/description
 4. `upload_youtube.py --channel kinogo`
-
-```bash
-# Upload a Short to Kino Go TV manually
-python scripts/upload_youtube.py --id kinogo-2026-07-11-1 --channel kinogo
-```
 
 ## Diagnose zero views / reach
 
