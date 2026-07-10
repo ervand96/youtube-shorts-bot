@@ -194,18 +194,6 @@ def build_findings(channel: dict, rows: list[dict]) -> list[dict]:
             }
         )
 
-    findings.append(
-        {
-            "severity": "medium",
-            "code": "analytics_api_disabled",
-            "title": "YouTube Analytics API not enabled",
-            "detail": (
-                "Impressions / CTR / traffic sources are unavailable until Analytics API is enabled "
-                "in Google Cloud and yt-analytics.readonly is added to OAuth scopes. "
-                "Without impressions we cannot tell '0 views because 0 impressions' vs 'shown but swiped'."
-            ),
-        }
-    )
     return findings
 
 
