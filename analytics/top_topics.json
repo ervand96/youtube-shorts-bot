@@ -48,7 +48,44 @@
       "views": 0,
       "likes": 0,
       "recorded_at": "2026-07-07T19:25:39.434848+00:00"
+    },
+    {
+      "topic": "2026-07-11-1",
+      "title": "ABC Song for Kids | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-11T03:06:14.129784+00:00"
+    },
+    {
+      "topic": "2026-07-11-2",
+      "title": "Bedtime Story for Kids | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-11T03:10:28.754342+00:00"
+    },
+    {
+      "topic": "2026-07-11-3",
+      "title": "Learn Colors for Toddlers | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-11T03:13:21.584029+00:00"
+    },
+    {
+      "topic": "2026-07-11-4",
+      "title": "Sharing Story for Kids | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-11T03:16:32.276830+00:00"
+    },
+    {
+      "topic": "2026-07-11-5",
+      "title": "Farm Animals Song for Toddlers | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-11T03:19:23.205755+00:00"
     }
   ],
-  "learnings": []
+  "learnings": [
+    "2026-07-11 daily batch: all five Shorts fetched at 0 immediate views before scheduled publish windows; wait for post-publish analytics before choosing winners."
+  ]
 }
