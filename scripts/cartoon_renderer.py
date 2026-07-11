@@ -460,7 +460,7 @@ def draw_bedroom_bg(draw: ImageDraw.ImageDraw, base_y: int, night: bool = False)
     draw.rectangle((90, base_y - 130, 520, base_y - 35), fill=(255, 255, 255))
     draw.ellipse((40, base_y - 280, 120, base_y - 200), fill=(255, 200, 220))
     draw.ellipse((620, base_y - 370, 780, base_y - 210), fill=(255, 240, 170))
-    draw.rectangle((700, base_y - 100, 720, base_y - 210), fill=(180, 140, 90))
+    draw.rectangle((700, base_y - 210, 720, base_y - 100), fill=(180, 140, 90))
 
 
 def draw_rainbow_road(draw: ImageDraw.ImageDraw, base_y: int, ctx: SceneContext) -> None:
