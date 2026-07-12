@@ -83,9 +83,45 @@
       "views": 0,
       "likes": 0,
       "recorded_at": "2026-07-11T03:19:23.205755+00:00"
+    },
+    {
+      "topic": "2026-07-12-1",
+      "title": "Wheels on the Bus Song | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-12T03:07:29.070532+00:00"
+    },
+    {
+      "topic": "2026-07-12-2",
+      "title": "Bedtime Story for Kids | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-12T03:10:07.692819+00:00"
+    },
+    {
+      "topic": "2026-07-12-3",
+      "title": "Learn Numbers for Toddlers | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-12T03:13:06.752260+00:00"
+    },
+    {
+      "topic": "2026-07-12-4",
+      "title": "Kindness Story for Kids | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-12T03:16:05.706005+00:00"
+    },
+    {
+      "topic": "2026-07-12-5",
+      "title": "Farm Animals Song for Kids | Kids Cartoon #shorts",
+      "views": 0,
+      "likes": 0,
+      "recorded_at": "2026-07-12T03:18:56.106468+00:00"
     }
   ],
   "learnings": [
-    "2026-07-11 daily batch: all five Shorts fetched at 0 immediate views before scheduled publish windows; wait for post-publish analytics before choosing winners."
+    "2026-07-11 daily batch: all five Shorts fetched at 0 immediate views before scheduled publish windows; wait for post-publish analytics before choosing winners.",
+    "2026-07-12 daily batch: all five Shorts scheduled successfully and fetched at 0 immediate views; compare bus song, numbers/shapes, kindness, bedtime, and farm-animal hooks after publish windows before repeating topics."
   ]
 }
