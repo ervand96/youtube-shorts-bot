@@ -61,7 +61,10 @@ def main() -> None:
 
     hours = config.get("publish_hours_local", [8, 12, 16, 18, 20])
     tz_offset = int(config.get("tz_offset_hours", -4))
-    slot_count = args.slots if args.slots is not None else len(config.get("slots", [])) or 5
+    if args.slots is not None:
+        slot_count = args.slots
+    else:
+        slot_count = int(config.get("slots_per_day") or len(config.get("slots", [])) or 1)
     py = sys.executable
     scripts = ROOT / "scripts"
     results = []
@@ -79,7 +82,8 @@ def main() -> None:
             continue
 
         run([py, str(scripts / "generate_voice.py"), "--id", fid, "--script", str(script_path)])
-        run([py, str(scripts / "build_video.py"), "--id", fid, "--script", str(script_path), "--basic"])
+        # Respect VIDEO_MODE (gemini / premium / free) — do not force --basic
+        run([py, str(scripts / "build_video.py"), "--id", fid, "--script", str(script_path)])
 
         if not args.skip_upload:
             hour = hours[slot - 1] if slot - 1 < len(hours) else 8 + slot * 2

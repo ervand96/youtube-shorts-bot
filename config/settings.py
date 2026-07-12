@@ -98,9 +98,17 @@ def use_premium_video() -> bool:
     mode = get_env("VIDEO_MODE", "free").lower()
     if mode in {"free", "basic", "0", "false", "no"}:
         return False
-    if mode in {"premium", "3d", "paid", "1", "true", "yes"}:
+    if mode in {"premium", "3d", "paid", "1", "true", "yes", "replicate"}:
         return bool(get_env("REPLICATE_API_TOKEN"))
     return False
+
+
+def use_gemini_video() -> bool:
+    """Gemini Nano Banana images + Ken Burns. Needs GEMINI_API_KEY (API; may require billing)."""
+    mode = get_env("VIDEO_MODE", "free").lower()
+    if mode not in {"gemini", "nano", "banana", "google"}:
+        return False
+    return bool(get_env("GEMINI_API_KEY") or get_env("GOOGLE_API_KEY"))
 
 
 def date_paths(date_str: str) -> dict[str, Path]:

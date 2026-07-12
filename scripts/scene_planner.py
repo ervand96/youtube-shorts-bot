@@ -1,4 +1,4 @@
-"""Plan visual scenes and 3D-style prompts from a kids script."""
+"""Plan visual scenes and AI cartoon prompts from a kids script."""
 
 from __future__ import annotations
 
@@ -6,17 +6,18 @@ import re
 from pathlib import Path
 
 STYLE_PREFIX = (
-    "Professional 3D kids cartoon animation frame, NuNu TV Cocomelon style, "
-    "cute toddler characters with big eyes, vibrant saturated colors, soft lighting, "
-    "high quality 3D render, cheerful mood, vertical 9:16 composition, no text, no watermark. "
+    "Professional 3D kids cartoon still frame, NuNu TV / Cocomelon style, "
+    "cute toddler boy Benny with blonde hair tuft, big sparkling eyes, blue overalls, "
+    "soft studio lighting, vibrant saturated colors, cheerful wholesome mood, "
+    "vertical 9:16 composition, no text, no watermark, no letters. "
 )
 
 SCENE_TEMPLATES = [
-    "Scene: {line} Toddler and cute bunny in colorful meadow with flowers and blue sky.",
-    "Scene: {line} Friendly 3D bunny character close-up, expressive face, pastel background.",
-    "Scene: {line} Bunny hopping near wooden garden gate, magical sparkles, kids storybook style.",
-    "Scene: {line} Sunny garden with rainbow, bunny meeting animal friends, celebration.",
-    "Scene: {line} Happy ending, bunny smiling with book, stars and soft clouds.",
+    "Hook scene: {line} Benny jumping with excitement, bright sunbeams, magical sparkles.",
+    "Scene: {line} Benny with cute white bunny friend in colorful meadow, flowers, blue sky.",
+    "Scene: {line} Close-up of Benny singing happily, expressive face, pastel background.",
+    "Scene: {line} Benny meeting animal friends, celebration, rainbow in the sky.",
+    "Happy ending: {line} Benny waving bye-bye, soft clouds and stars, warm glow.",
 ]
 
 
