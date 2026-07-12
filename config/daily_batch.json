@@ -1,8 +1,8 @@
 {
   "paused": true,
-  "paused_reason": "Waiting for GEMINI_API_KEY + VIDEO_MODE=gemini. Pillow 2D stays off.",
+  "paused_reason": "Gemini key works but free-tier quota exceeded (429). Enable billing on Google AI, then set paused=false.",
   "paused_at": "2026-07-12",
-  "resume_when": "Set Cloud Secrets: VIDEO_MODE=gemini, GEMINI_API_KEY=... then set paused=false",
+  "resume_when": "Link billing at https://aistudio.google.com / Google Cloud, then retest VIDEO_MODE=gemini",
   "slots_per_day": 1,
   "slots": [
     {
@@ -15,5 +15,5 @@
   "timezone": "America/New_York",
   "tz_offset_hours": -4,
   "publish_hours_local": [9],
-  "notes": "Gemini mode: 1 Short/day to stay within API quotas. Unpause after secrets are set."
+  "notes": "Gemini mode ready in code. Needs billed API project (free Cloud credit OK)."
 }
