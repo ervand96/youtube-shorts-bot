@@ -1,4 +1,8 @@
 {
+  "paused": true,
+  "paused_reason": "Visual quality not competitive. Do not publish daily Shorts until a stock-video or AI video pipeline replaces Pillow 2D.",
+  "paused_at": "2026-07-12",
+  "resume_when": "Stock backgrounds + sprites OR VIDEO_MODE=premium with working Replicate credits",
   "slots": [
     {
       "category": "nursery",
@@ -34,5 +38,5 @@
   "timezone": "America/New_York",
   "tz_offset_hours": -4,
   "publish_hours_local": [8, 12, 16, 18, 20],
-  "notes": "Hours are US Eastern (EDT). Morning / noon / after-school / evening for US kids."
+  "notes": "PAUSED. Hours are US Eastern (EDT) for when publishing resumes."
 }

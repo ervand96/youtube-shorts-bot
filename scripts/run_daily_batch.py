@@ -39,10 +39,26 @@ def main() -> None:
     parser.add_argument("--date", default=date.today().isoformat())
     parser.add_argument("--skip-upload", action="store_true")
     parser.add_argument("--slots", type=int, default=None, help="Override slot count (default from config)")
+    parser.add_argument("--force", action="store_true", help="Run even if config.paused is true")
     args = parser.parse_args()
 
     ensure_dirs()
     config = json.loads(BATCH_CONFIG.read_text(encoding="utf-8"))
+    if config.get("paused") and not args.force:
+        print(
+            json.dumps(
+                {
+                    "status": "paused",
+                    "date": args.date,
+                    "reason": config.get("paused_reason", "Daily batch paused"),
+                    "resume_when": config.get("resume_when", ""),
+                    "hint": "Set paused=false in config/daily_batch.json or pass --force",
+                },
+                indent=2,
+            )
+        )
+        return
+
     hours = config.get("publish_hours_local", [8, 12, 16, 18, 20])
     tz_offset = int(config.get("tz_offset_hours", -4))
     slot_count = args.slots if args.slots is not None else len(config.get("slots", [])) or 5
@@ -69,7 +85,6 @@ def main() -> None:
             hour = hours[slot - 1] if slot - 1 < len(hours) else 8 + slot * 2
             pub = publish_at_iso(args.date, hour, tz_offset_hours=tz_offset)
             run([py, str(scripts / "upload_youtube.py"), "--id", fid, "--publish-at", pub])
-            # Thumbnail after upload (requires phone-verified channel)
             run([py, str(scripts / "set_slot_thumbnail.py"), "--id", fid])
             run([py, str(scripts / "fetch_analytics.py"), "--id", fid])
 
