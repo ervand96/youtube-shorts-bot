@@ -72,6 +72,8 @@ def update_branding(youtube, channel_id: str) -> None:
                 "title": CHANNEL_TITLE,
                 "description": CHANNEL_DESCRIPTION,
                 "keywords": CHANNEL_KEYWORDS,
+                "defaultLanguage": "en",
+                "country": "US",
                 "defaultTab": "featured",
                 "showRelatedChannels": True,
                 "showBrowseView": True,

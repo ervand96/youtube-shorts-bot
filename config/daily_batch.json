@@ -3,33 +3,36 @@
     {
       "category": "nursery",
       "title": "Wheels on the Bus | Kids Song",
-      "tags": ["wheels on the bus", "nursery rhyme", "kids songs"],
-      "script_hook": "The wheels on the bus go round and round"
+      "tags": ["wheels on the bus", "nursery rhyme", "kids songs", "toddler songs", "cocomelon style"],
+      "script_hook": "WOW! The MAGIC yellow bus is HERE! CLAP CLAP!"
     },
     {
       "category": "bedtime",
       "title": "Bedtime Bunny Story for Kids",
-      "tags": ["bedtime story", "bunny", "kids cartoon"],
-      "script_hook": "Once upon a time, a little bunny could not sleep"
+      "tags": ["bedtime story", "bunny", "kids cartoon", "sleep story", "toddlers"],
+      "script_hook": "SHHH… Benny found a sleepy little star! Look!"
     },
     {
       "category": "learning",
       "title": "Learn Colors with Benny | Kids",
-      "tags": ["learn colors", "educational", "preschool"],
-      "script_hook": "Red, blue, yellow, green — let's learn colors!"
+      "tags": ["learn colors", "educational", "preschool", "toddler learning", "abc kids"],
+      "script_hook": "TAP TAP! RED! BLUE! YELLOW! Can YOU say it?"
     },
     {
       "category": "moral",
       "title": "Sharing is Caring | Moral Story",
-      "tags": ["moral story", "sharing", "kids lesson"],
-      "script_hook": "Benny learned that sharing makes everyone happy"
+      "tags": ["moral story", "sharing", "kids lesson", "kindness", "preschool"],
+      "script_hook": "OH NO! Benny has ONE cookie… what happens NEXT?"
     },
     {
       "category": "animals",
       "title": "Farm Animals Song for Toddlers",
-      "tags": ["farm animals", "animal sounds", "toddler songs"],
-      "script_hook": "The cow says moo, the duck says quack"
+      "tags": ["farm animals", "animal sounds", "toddler songs", "old macdonald", "kids farm"],
+      "script_hook": "MOO MOO! QUACK QUACK! Who is on the farm?"
     }
   ],
-  "publish_hours_local": [9, 11, 13, 15, 17]
+  "timezone": "America/New_York",
+  "tz_offset_hours": -4,
+  "publish_hours_local": [8, 12, 16, 18, 20],
+  "notes": "Hours are US Eastern (EDT). Morning / noon / after-school / evening for US kids."
 }

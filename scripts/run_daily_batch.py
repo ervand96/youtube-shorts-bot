@@ -27,27 +27,30 @@ def file_id(day: str, slot: int) -> str:
     return f"{day}-{slot}"
 
 
-def publish_at_iso(day: str, hour: int, tz_offset_hours: int = 4) -> str:
+def publish_at_iso(day: str, hour: int, tz_offset_hours: int = -4) -> str:
+    """Schedule publish time. Default offset -4 = US Eastern (EDT)."""
     local = datetime.strptime(f"{day} {hour:02d}:00:00", "%Y-%m-%d %H:%M:%S")
     utc = local - timedelta(hours=tz_offset_hours)
     return utc.replace(tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Produce 5 daily Shorts")
+    parser = argparse.ArgumentParser(description="Produce daily Shorts batch")
     parser.add_argument("--date", default=date.today().isoformat())
     parser.add_argument("--skip-upload", action="store_true")
-    parser.add_argument("--slots", type=int, default=5)
+    parser.add_argument("--slots", type=int, default=None, help="Override slot count (default from config)")
     args = parser.parse_args()
 
     ensure_dirs()
     config = json.loads(BATCH_CONFIG.read_text(encoding="utf-8"))
-    hours = config.get("publish_hours_local", [9, 11, 13, 15, 17])
+    hours = config.get("publish_hours_local", [8, 12, 16, 18, 20])
+    tz_offset = int(config.get("tz_offset_hours", -4))
+    slot_count = args.slots if args.slots is not None else len(config.get("slots", [])) or 5
     py = sys.executable
     scripts = ROOT / "scripts"
     results = []
 
-    for slot in range(1, args.slots + 1):
+    for slot in range(1, slot_count + 1):
         fid = file_id(args.date, slot)
         script_path = SCRIPTS_DIR / f"{fid}-topic.md"
         meta_path = VIDEOS_DIR / f"{fid}-metadata.json"
@@ -63,9 +66,11 @@ def main() -> None:
         run([py, str(scripts / "build_video.py"), "--id", fid, "--script", str(script_path), "--basic"])
 
         if not args.skip_upload:
-            hour = hours[slot - 1] if slot - 1 < len(hours) else 9 + slot * 2
-            pub = publish_at_iso(args.date, hour)
+            hour = hours[slot - 1] if slot - 1 < len(hours) else 8 + slot * 2
+            pub = publish_at_iso(args.date, hour, tz_offset_hours=tz_offset)
             run([py, str(scripts / "upload_youtube.py"), "--id", fid, "--publish-at", pub])
+            # Thumbnail after upload (requires phone-verified channel)
+            run([py, str(scripts / "set_slot_thumbnail.py"), "--id", fid])
             run([py, str(scripts / "fetch_analytics.py"), "--id", fid])
 
         results.append(fid)

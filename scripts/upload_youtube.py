@@ -59,13 +59,18 @@ def upload_video(
     else:
         category = str(metadata.get("categoryId", "1"))
 
+    snippet = {
+        "title": metadata["title"][:100],
+        "description": metadata["description"],
+        "tags": metadata["tags"],
+        "categoryId": category,
+    }
+    if profile["key"] == "benny":
+        snippet["defaultLanguage"] = "en"
+        snippet["defaultAudioLanguage"] = "en"
+
     body = {
-        "snippet": {
-            "title": metadata["title"][:100],
-            "description": metadata["description"],
-            "tags": metadata["tags"],
-            "categoryId": category,
-        },
+        "snippet": snippet,
         "status": status,
     }
 

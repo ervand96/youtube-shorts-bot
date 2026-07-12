@@ -302,6 +302,91 @@ def draw_stars(img: Image.Image, frame: int) -> None:
     img.paste(layer, (0, 0), layer)
 
 
+def draw_trees(draw: ImageDraw.ImageDraw, base_y: int, frame: int, parallax: float) -> None:
+    """Far-layer cartoon trees for depth."""
+    trees = [(80, 1.0), (220, 0.8), (860, 0.9), (980, 1.1)]
+    shift = int(parallax * 0.08)
+    for tx, scale in trees:
+        x = tx - shift
+        trunk_h = int(90 * scale)
+        canopy = int(70 * scale)
+        sway = int(4 * math.sin(frame / 18 + x))
+        draw.rectangle((x - 8, base_y - trunk_h, x + 8, base_y + 10), fill=(120, 70, 40))
+        draw.ellipse(
+            (x - canopy + sway, base_y - trunk_h - canopy, x + canopy + sway, base_y - trunk_h + 20),
+            fill=(50, 160, 70),
+            outline=(30, 120, 50),
+            width=3,
+        )
+        draw.ellipse(
+            (x - canopy // 2 + sway, base_y - trunk_h - canopy - 25, x + canopy // 2 + sway, base_y - trunk_h - 10),
+            fill=(70, 190, 90),
+        )
+
+
+def draw_hook_banner(img: Image.Image, line: str, frame_idx: int, accent: tuple[int, int, int]) -> None:
+    """Giant hook text for the first ~1.5s to stop the swipe."""
+    if frame_idx > 48:
+        return
+    fade = 1.0 if frame_idx < 30 else max(0.0, 1.0 - (frame_idx - 30) / 18)
+    if fade <= 0:
+        return
+    words = line.upper().split()
+    # Keep hook punchy — max 5 words, wrap to 2 lines
+    hook_words = words[:5]
+    if len(hook_words) <= 3:
+        lines_txt = [" ".join(hook_words)]
+    else:
+        mid = (len(hook_words) + 1) // 2
+        lines_txt = [" ".join(hook_words[:mid]), " ".join(hook_words[mid:])]
+
+    layer = Image.new("RGBA", (VIDEO_WIDTH, VIDEO_HEIGHT), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(layer)
+    pulse = 1.0 + 0.05 * math.sin(frame_idx / 3)
+    font = load_font(int(64 * pulse) if len(lines_txt) == 1 else int(56 * pulse))
+    line_heights = []
+    line_widths = []
+    for lt in lines_txt:
+        bbox = draw.textbbox((0, 0), lt, font=font)
+        line_widths.append(bbox[2] - bbox[0])
+        line_heights.append(bbox[3] - bbox[1])
+    tw = max(line_widths) if line_widths else 0
+    th = sum(line_heights) + (12 * (len(lines_txt) - 1))
+    pad_x, pad_y = 40, 30
+    bx = max(40, (VIDEO_WIDTH - tw) // 2 - pad_x)
+    by = int(VIDEO_HEIGHT * 0.26) - pad_y
+    bw = min(VIDEO_WIDTH - 80, tw + pad_x * 2)
+    alpha = int(235 * fade)
+    draw.rounded_rectangle((bx, by, bx + bw, by + th + pad_y * 2), radius=40, fill=(*accent, alpha))
+    draw.rounded_rectangle(
+        (bx + 8, by + 8, bx + bw - 8, by + th + pad_y * 2 - 8),
+        radius=32,
+        fill=(255, 255, 255, int(220 * fade)),
+    )
+    y = by + pad_y
+    for i, lt in enumerate(lines_txt):
+        x = bx + (bw - line_widths[i]) // 2
+        for ox, oy in ((-3, 0), (3, 0), (0, -3), (0, 3)):
+            draw.text((x + ox, y + oy), lt, font=font, fill=(20, 20, 40, alpha))
+        draw.text((x, y), lt, font=font, fill=(*accent, alpha))
+        y += line_heights[i] + 12
+    img.paste(layer, (0, 0), layer)
+
+
+def draw_progress_bar(img: Image.Image, line_idx: int, total_lines: int, accent: tuple[int, int, int]) -> None:
+    if total_lines <= 1:
+        return
+    layer = Image.new("RGBA", (VIDEO_WIDTH, VIDEO_HEIGHT), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(layer)
+    bar_y = 24
+    margin = 50
+    full_w = VIDEO_WIDTH - margin * 2
+    draw.rounded_rectangle((margin, bar_y, margin + full_w, bar_y + 14), radius=7, fill=(255, 255, 255, 90))
+    filled = int(full_w * ((line_idx + 1) / total_lines))
+    draw.rounded_rectangle((margin, bar_y, margin + max(filled, 20), bar_y + 14), radius=7, fill=(*accent, 230))
+    img.paste(layer, (0, 0), layer)
+
+
 def draw_foreground_flowers(draw: ImageDraw.ImageDraw, base_y: int, frame: int, accent: tuple[int, int, int]) -> None:
     colors = (accent, (255, 200, 80), (255, 120, 150), (180, 120, 255))
     rng = random.Random(7)
@@ -331,73 +416,74 @@ def draw_sparkles(img: Image.Image, frame: int, count: int = 12) -> None:
     img.paste(layer, (0, 0), layer)
 
 
-def draw_benny(draw: ImageDraw.ImageDraw, cx: int, cy: int, ctx: SceneContext) -> None:
+def draw_benny(draw: ImageDraw.ImageDraw, cx: int, cy: int, ctx: SceneContext, scale: float = 1.0) -> None:
     """Benny — consistent channel mascot with bounce, blink, and wave."""
     frame = ctx.frame_idx
-    bounce = int(12 * math.sin(frame / 5))
+    bounce = int(12 * scale * math.sin(frame / 5))
     cy += bounce
+    s = scale
     skin = (255, 218, 185)
     hair_color = (255, 200, 60)
     overalls = (50, 130, 230)
     shirt = (255, 90, 90)
 
-    draw_soft_shadow(draw, cx, cy + 195, 80, 22)
+    draw_soft_shadow(draw, cx, cy + int(195 * s), int(80 * s), int(22 * s))
 
     # walk cycle — legs alternate every few frames
     step = math.sin(frame / 4)
-    left_lift = int(18 * max(0, step))
-    right_lift = int(18 * max(0, -step))
-    legs = ((cx - 35, left_lift), (cx + 15, right_lift))
+    left_lift = int(18 * s * max(0, step))
+    right_lift = int(18 * s * max(0, -step))
+    legs = ((cx - int(35 * s), left_lift), (cx + int(15 * s), right_lift))
     for lx, lift in legs:
-        draw.rounded_rectangle((lx, cy + 155 - lift, lx + 40, cy + 210 - lift), radius=12, fill=overalls)
-        draw.rounded_rectangle((lx - 4, cy + 200 - lift, lx + 44, cy + 225 - lift), radius=10, fill=(220, 50, 50))
+        draw.rounded_rectangle((lx, cy + int(155 * s) - lift, lx + int(40 * s), cy + int(210 * s) - lift), radius=int(12 * s), fill=overalls)
+        draw.rounded_rectangle((lx - int(4 * s), cy + int(200 * s) - lift, lx + int(44 * s), cy + int(225 * s) - lift), radius=int(10 * s), fill=(220, 50, 50))
     # sideways drift while walking
-    cx += int(25 * math.sin(frame / 8))
+    cx += int(25 * s * math.sin(frame / 8))
 
     # body / overalls
-    draw.rounded_rectangle((cx - 78, cy + 35, cx + 78, cy + 175), radius=35, fill=overalls, outline=(30, 90, 180), width=3)
-    draw.rounded_rectangle((cx - 55, cy + 50, cx + 55, cy + 120), radius=20, fill=shirt)
+    draw.rounded_rectangle((cx - int(78 * s), cy + int(35 * s), cx + int(78 * s), cy + int(175 * s)), radius=int(35 * s), fill=overalls, outline=(30, 90, 180), width=max(2, int(3 * s)))
+    draw.rounded_rectangle((cx - int(55 * s), cy + int(50 * s), cx + int(55 * s), cy + int(120 * s)), radius=int(20 * s), fill=shirt)
     # straps
-    draw.rectangle((cx - 50, cy + 35, cx - 35, cy + 90), fill=overalls)
-    draw.rectangle((cx + 35, cy + 35, cx + 50, cy + 90), fill=overalls)
+    draw.rectangle((cx - int(50 * s), cy + int(35 * s), cx - int(35 * s), cy + int(90 * s)), fill=overalls)
+    draw.rectangle((cx + int(35 * s), cy + int(35 * s), cx + int(50 * s), cy + int(90 * s)), fill=overalls)
     # button
-    draw.ellipse((cx - 10, cy + 130, cx + 10, cy + 150), fill=(255, 220, 60))
+    draw.ellipse((cx - int(10 * s), cy + int(130 * s), cx + int(10 * s), cy + int(150 * s)), fill=(255, 220, 60))
 
     # head
-    glossy_ellipse(draw, (cx - 98, cy - 125, cx + 98, cy + 65), skin, (230, 185, 155), width=4)
+    glossy_ellipse(draw, (cx - int(98 * s), cy - int(125 * s), cx + int(98 * s), cy + int(65 * s)), skin, (230, 185, 155), width=max(2, int(4 * s)))
     # hair
-    draw.ellipse((cx - 85, cy - 155, cx + 85, cy - 45), fill=hair_color)
-    draw.ellipse((cx - 35, cy - 180, cx + 35, cy - 90), fill=hair_color)
+    draw.ellipse((cx - int(85 * s), cy - int(155 * s), cx + int(85 * s), cy - int(45 * s)), fill=hair_color)
+    draw.ellipse((cx - int(35 * s), cy - int(180 * s), cx + int(35 * s), cy - int(90 * s)), fill=hair_color)
     # rosy cheeks
-    for cheek_x in (cx - 70, cx + 40):
-        draw.ellipse((cheek_x, cy - 15, cheek_x + 30, cy + 15), fill=(255, 170, 160))
+    for cheek_x in (cx - int(70 * s), cx + int(40 * s)):
+        draw.ellipse((cheek_x, cy - int(15 * s), cheek_x + int(30 * s), cy + int(15 * s)), fill=(255, 170, 160))
 
     blink = (frame // 18) % 14 == 0
-    # eyes
-    for ex in (cx - 45, cx + 12):
-        draw.ellipse((ex, cy - 48, ex + 40, cy - 6), fill=(255, 255, 255), outline=(200, 200, 210), width=2)
+    # eyes — bigger for Shorts face readability
+    for ex in (cx - int(50 * s), cx + int(10 * s)):
+        draw.ellipse((ex, cy - int(55 * s), ex + int(48 * s), cy - int(2 * s)), fill=(255, 255, 255), outline=(200, 200, 210), width=2)
         if blink:
-            draw.line([(ex + 4, cy - 28), (ex + 36, cy - 28)], fill=(60, 40, 30), width=4)
+            draw.line([(ex + int(4 * s), cy - int(30 * s)), (ex + int(42 * s), cy - int(30 * s))], fill=(60, 40, 30), width=max(3, int(5 * s)))
         else:
-            pupil_x = ex + 14 + int(4 * math.sin(frame / 10))
-            draw.ellipse((pupil_x, cy - 35, pupil_x + 18, cy - 15), fill=(35, 35, 55))
-            draw.ellipse((pupil_x + 5, cy - 32, pupil_x + 11, cy - 24), fill=(255, 255, 255))
+            pupil_x = ex + int(16 * s) + int(5 * s * math.sin(frame / 10))
+            draw.ellipse((pupil_x, cy - int(40 * s), pupil_x + int(22 * s), cy - int(14 * s)), fill=(35, 35, 55))
+            draw.ellipse((pupil_x + int(6 * s), cy - int(36 * s), pupil_x + int(13 * s), cy - int(26 * s)), fill=(255, 255, 255))
 
     # lip-sync style mouth — opens on syllable rhythm
     syllable_beat = math.sin(frame / 3 + ctx.line_progress * 12) > 0.2
-    mouth_open = bounce > 6 or syllable_beat or ctx.energetic
+    mouth_open = bounce > 6 * s or syllable_beat or ctx.energetic
     if mouth_open:
-        draw.ellipse((cx - 22, cy - 5, cx + 22, cy + 25), fill=(200, 80, 90))
-        draw.ellipse((cx - 18, cy + 2, cx + 18, cy + 18), fill=(255, 150, 150))
+        draw.ellipse((cx - int(26 * s), cy - int(5 * s), cx + int(26 * s), cy + int(30 * s)), fill=(200, 80, 90))
+        draw.ellipse((cx - int(20 * s), cy + int(2 * s), cx + int(20 * s), cy + int(20 * s)), fill=(255, 150, 150))
     else:
-        draw.arc((cx - 38, cy - 18, cx + 38, cy + 28), 20, 160, fill=(210, 90, 90), width=5)
+        draw.arc((cx - int(42 * s), cy - int(18 * s), cx + int(42 * s), cy + int(32 * s)), 20, 160, fill=(210, 90, 90), width=max(4, int(6 * s)))
 
     # waving arm
-    arm_swing = int(30 * math.sin(frame / 4))
-    draw.line([(cx + 75, cy + 65), (cx + 130, cy + 5 + arm_swing)], fill=skin, width=20)
-    draw.ellipse((cx + 115, cy - 5 + arm_swing, cx + 145, cy + 25 + arm_swing), fill=skin)
+    arm_swing = int(30 * s * math.sin(frame / 4))
+    draw.line([(cx + int(75 * s), cy + int(65 * s)), (cx + int(130 * s), cy + int(5 * s) + arm_swing)], fill=skin, width=max(14, int(22 * s)))
+    draw.ellipse((cx + int(115 * s), cy - int(5 * s) + arm_swing, cx + int(145 * s), cy + int(25 * s) + arm_swing), fill=skin)
     # other arm
-    draw.line([(cx - 75, cy + 70), (cx - 110, cy + 110)], fill=skin, width=18)
+    draw.line([(cx - int(75 * s), cy + int(70 * s)), (cx - int(110 * s), cy + int(110 * s))], fill=skin, width=max(12, int(18 * s)))
 
 
 def draw_bunny_friend(draw: ImageDraw.ImageDraw, cx: int, cy: int, ctx: SceneContext) -> None:
@@ -539,30 +625,33 @@ def draw_butterflies(img: Image.Image, frame: int) -> None:
 def render_scene(draw: ImageDraw.ImageDraw, img: Image.Image, scene: str, base_y: int, ctx: SceneContext) -> None:
     theme = ctx.theme
     frame = ctx.frame_idx
+    # Bigger Benny on hook / energetic lines — better face retention on Shorts
+    benny_scale = 1.35 if (ctx.line_progress < 0.35 or ctx.energetic) else 1.15
     if scene == "bus":
         draw_yellow_bus(draw, base_y, ctx, theme.bus_color)
-        draw_benny(draw, 740, base_y - 55, ctx)
+        draw_benny(draw, 720, base_y - 70, ctx, scale=benny_scale)
         draw_bunny_friend(draw, 920, base_y - 25, ctx)
     elif scene == "rainbow_road":
         draw_rainbow_road(draw, base_y, ctx)
         draw_yellow_bus(draw, base_y, ctx, theme.bus_color)
         draw_bunny_friend(draw, 840, base_y - 35, ctx)
+        draw_benny(draw, 700, base_y - 60, ctx, scale=benny_scale)
     elif scene == "song_circle":
         draw.ellipse((340, base_y - 230, 740, base_y + 25), fill=(255, 235, 110), outline=(255, 195, 50), width=6)
         draw.ellipse((370, base_y - 200, 710, base_y - 5), fill=(255, 245, 170))
-        draw_benny(draw, 540, base_y - 85, ctx)
+        draw_benny(draw, 540, base_y - 95, ctx, scale=benny_scale)
         draw_bunny_friend(draw, 720, base_y - 55, ctx)
     elif scene in {"bedroom_night", "moon_stars", "sleepy_meadow"}:
         draw_bedroom_bg(draw, base_y, night=True)
-        draw_benny(draw, 540, base_y - 85, ctx)
+        draw_benny(draw, 540, base_y - 95, ctx, scale=benny_scale)
         draw_bunny_friend(draw, 760, base_y - 45, ctx)
     elif scene in {"classroom", "color_blocks", "counting_garden"}:
         draw.rounded_rectangle((70, base_y - 440, 1010, base_y - 55), radius=32, fill=(255, 242, 215), outline=(210, 185, 140), width=7)
         draw_color_blocks(draw, base_y)
-        draw_benny(draw, 510, base_y - 55, ctx)
+        draw_benny(draw, 510, base_y - 65, ctx, scale=benny_scale)
     elif scene in {"picnic", "sharing_table", "friends_meadow"}:
         draw_picnic_scene(draw, base_y)
-        draw_benny(draw, 510, base_y - 95, ctx)
+        draw_benny(draw, 510, base_y - 105, ctx, scale=benny_scale)
         draw_bunny_friend(draw, 720, base_y - 65, ctx)
     elif scene in {"farm_barn", "animal_band", "meadow_animals"}:
         draw_farm_barn(draw, base_y, ctx)
@@ -570,14 +659,14 @@ def render_scene(draw: ImageDraw.ImageDraw, img: Image.Image, scene: str, base_y
         draw_farm_animal(draw, 470, base_y - 22, "duck", ctx)
         draw_farm_animal(draw, 690, base_y - 32, "sheep", ctx)
         draw_farm_animal(draw, 910, base_y - 12, "pig", ctx)
-        draw_benny(draw, 560, base_y - 95, ctx)
+        draw_benny(draw, 560, base_y - 105, ctx, scale=benny_scale)
     elif scene == "playground":
         draw_playground(draw, base_y, ctx)
-        draw_benny(draw, 490, base_y - 55, ctx)
+        draw_benny(draw, 490, base_y - 65, ctx, scale=benny_scale)
         draw_bunny_friend(draw, 670, base_y - 25, ctx)
     else:
         draw.ellipse((730, 170, 960, 400), fill=(255, 225, 90), outline=(255, 200, 50), width=5)
-        draw_benny(draw, 510, base_y - 55, ctx)
+        draw_benny(draw, 510, base_y - 65, ctx, scale=benny_scale)
         draw_bunny_friend(draw, 310, base_y - 35, ctx)
 
     if not theme.night_mode and scene not in {"bedroom_night", "moon_stars", "sleepy_meadow"}:
@@ -593,17 +682,17 @@ def draw_caption_bar(img: Image.Image, line: str, line_progress: float, accent: 
     if len(words) > 10:
         display_words[-1] = display_words[-1] + "..."
 
-    bar_h = 200
-    bar_y = VIDEO_HEIGHT - bar_h - 40
+    bar_h = 220
+    bar_y = VIDEO_HEIGHT - bar_h - 30
     layer = Image.new("RGBA", (VIDEO_WIDTH, VIDEO_HEIGHT), (0, 0, 0, 0))
     draw = ImageDraw.Draw(layer)
 
     # bar background with gradient feel
     dark = tuple(max(0, c - 40) for c in accent)
-    draw.rounded_rectangle((30, bar_y, VIDEO_WIDTH - 30, bar_y + bar_h), radius=36, fill=(*accent, 240))
-    draw.rounded_rectangle((40, bar_y + 6, VIDEO_WIDTH - 40, bar_y + bar_h - 6), radius=30, fill=(*dark, 200))
+    draw.rounded_rectangle((24, bar_y, VIDEO_WIDTH - 24, bar_y + bar_h), radius=40, fill=(*accent, 245))
+    draw.rounded_rectangle((34, bar_y + 8, VIDEO_WIDTH - 34, bar_y + bar_h - 8), radius=34, fill=(*dark, 210))
 
-    font = load_font(46)
+    font = load_font(52)
     word_idx = min(int(line_progress * len(display_words)), len(display_words) - 1)
 
     total_w = 0
@@ -705,6 +794,8 @@ def render_cartoon_frame(
 
     base_y = int(VIDEO_HEIGHT * 0.72)
     draw = ImageDraw.Draw(img)
+    if not night:
+        draw_trees(draw, base_y - 20, frame_idx, parallax)
     draw_foreground_flowers(draw, base_y, frame_idx, theme.accent)
     render_scene(draw, img, scene, base_y, ctx)
 
@@ -712,30 +803,33 @@ def render_cartoon_frame(
         draw_sparkles(img, frame_idx, count=14 if night else 22)
 
     if energetic and frame_idx % 8 < 4:
-        img = draw_confetti(img, global_frame, density=12)
+        img = draw_confetti(img, global_frame, density=16)
 
     draw_caption_bar(img, line, line_progress, theme.accent)
     draw_channel_badge(img, theme.accent)
+    draw_progress_bar(img, line_idx, total_lines, theme.accent)
+    if line_idx == 0:
+        draw_hook_banner(img, line, frame_idx, theme.accent)
     apply_vignette(img)
 
     # dynamic camera: zoom + pan direction changes per line
-    pan_x = int(20 * math.sin(line_progress * math.pi))
-    zoom = 0.08 + (0.04 if energetic else 0.0)
+    pan_x = int(24 * math.sin(line_progress * math.pi))
+    zoom = 0.10 + (0.05 if energetic else 0.0)
     img = apply_ken_burns(img, line_progress, zoom=zoom)
     if pan_x:
         canvas = Image.new("RGB", img.size, (135, 200, 235))
         canvas.paste(img, (pan_x, 0))
         img = canvas
 
-    # beat pulse every ~15 frames
-    if global_frame % 15 < 3:
-        img = pulse_scale(img, 0.025 if energetic else 0.012)
+    # beat pulse every ~12 frames — punchier
+    if global_frame % 12 < 3:
+        img = pulse_scale(img, 0.03 if energetic else 0.015)
 
     if line_idx == 0:
         img = hook_burst(img, frame_idx)
 
     if energetic:
-        dx, dy = shake_offset(frame_idx, intensity=0.7)
+        dx, dy = shake_offset(frame_idx, intensity=0.85)
         img = apply_shake(img, dx, dy)
 
     return img
