@@ -30,7 +30,7 @@ PLAYLISTS = [
         "title": "Learning for Preschool",
         "description": "Fun educational Shorts — colors, numbers, ABC and more for preschoolers.",
         "keywords": ["learn", "colors", "numbers", "educational", "preschool"],
-        "match": ["learn", "colors", "numbers", "preschool", "educational", "abc"],
+        "match": ["learn", "colors", "numbers", "preschool", "educational"],
     },
     {
         "title": "Moral Stories for Kids",

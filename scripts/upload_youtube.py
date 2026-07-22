@@ -107,9 +107,6 @@ def main() -> None:
 
     ensure_dirs()
     video_path = VIDEOS_DIR / f"{file_id}.mp4"
-    thumb_path = VIDEOS_DIR / f"{file_id}-thumb.mp4"
-    if thumb_path.exists():
-        video_path = thumb_path
     metadata_path = Path(args.metadata) if args.metadata else VIDEOS_DIR / f"{file_id}-metadata.json"
     upload_log = ANALYTICS_DIR / f"{file_id}-upload.json"
 
